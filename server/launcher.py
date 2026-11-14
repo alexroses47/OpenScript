@@ -68,7 +68,27 @@ def main():
         print("celtx.exe not found at", app)
         return 1
     proc = subprocess.Popen([app] + sys.argv[1:], cwd=os.path.dirname(app))
-    return proc.wait()
+    code = proc.wait()
+    # The engine re-launches itself in a new process (e.g. on first run after
+    # registering components), so keep the server alive while any celtx.exe
+    # is still running instead of following only the first process.
+    import time
+    while engine_running():
+        time.sleep(2)
+    return code
+
+
+def engine_running():
+    if os.name != "nt":
+        return False
+    try:
+        out = subprocess.run(
+            ["tasklist", "/FI", "IMAGENAME eq celtx.exe", "/NH"],
+            capture_output=True, text=True, timeout=10,
+            creationflags=0x08000000)  # CREATE_NO_WINDOW
+        return "celtx.exe" in out.stdout.lower()
+    except Exception:
+        return False
 
 
 if __name__ == "__main__":
