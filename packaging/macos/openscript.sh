@@ -14,6 +14,7 @@ export WINEPREFIX="$SUPPORT/prefix"
 export WINEDEBUG=-all
 # no desktop integration, no .NET / Internet Explorer install prompts
 export WINEDLLOVERRIDES="winemenubuilder.exe=d;mscoree=d;mshtml=d"
+export MVK_CONFIG_LOG_LEVEL=0   # MoltenVK (Vulkan) is not used; keep the log short
 
 mkdir -p "$SUPPORT"
 exec >>"$LOG" 2>&1
@@ -40,12 +41,24 @@ fi
 if [ ! -f "$WINEPREFIX/.openscript-ready" ]; then
   echo "creating Wine prefix in $WINEPREFIX"
   "$WINE" wineboot --init
-  # 2. Sharp text on Retina screens: full resolution + 192 dpi, so the
-  #    engine draws its interface at 2x (it follows the Windows DPI).
+  # 2. Full-resolution rendering on Retina screens
   "$WINE" reg add 'HKCU\Software\Wine\Mac Driver' /v RetinaMode /t REG_SZ /d y /f
-  "$WINE" reg add 'HKCU\Control Panel\Desktop' /v LogPixels /t REG_DWORD /d 192 /f
   "$WINESERVER" -w
   touch "$WINEPREFIX/.openscript-ready"
+fi
+
+# 2. The engine scales its interface with the Windows DPI: 192 (2x) on
+#    Retina screens, 96 on standard ones. Checked on every start, since the
+#    Mac may now be using a different monitor.
+if /usr/sbin/system_profiler SPDisplaysDataType 2>/dev/null | grep -q "Retina"; then
+  dpi=192
+else
+  dpi=96
+fi
+if [ "$(cat "$SUPPORT/dpi" 2>/dev/null)" != "$dpi" ]; then
+  "$WINE" reg add 'HKCU\Control Panel\Desktop' /v LogPixels /t REG_DWORD /d $dpi /f
+  "$WINESERVER" -w
+  echo "$dpi" > "$SUPPORT/dpi"
 fi
 
 # Per-user secret shared by the engine and the local server

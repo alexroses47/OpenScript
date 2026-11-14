@@ -339,6 +339,12 @@ def build_windows(args, work):
     apply_code_patches(app)
     set_default_locale(app)
     rebrand(app, args.version)
+    # Window icons (taskbar, and the Dock under Wine on macOS): the engine
+    # looks for chrome/icons/default/<window id>.ico before its own icon.
+    icons = os.path.join(app, "chrome", "icons", "default")
+    os.makedirs(icons, exist_ok=True)
+    for name in ("default", "celtx", "templatewindow"):
+        shutil.copy2(os.path.join(ASSETS, "openscript.ico"), os.path.join(icons, name + ".ico"))
 
     # English locale (the Spanish portable build ships only Spanish)
     with tarfile.open(args.linux_tar) as t:
