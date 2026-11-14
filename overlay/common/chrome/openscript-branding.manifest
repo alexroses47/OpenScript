@@ -9,3 +9,4 @@ override chrome://celtx/content/util.js chrome://openscriptbrand/content/util.js
 # Branding styles and removal of dead Celtx online services
 style chrome://celtx/content/celtx.xul chrome://openscriptbrand/content/openscript.css
 style chrome://celtx/content/templates.xul chrome://openscriptbrand/content/openscript.css
+override chrome://celtx/content/credits.xhtml chrome://openscriptbrand/content/credits.xhtml

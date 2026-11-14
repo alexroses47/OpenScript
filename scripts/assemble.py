@@ -183,6 +183,29 @@ def write_branded_util(app):
         f.write("// OpenScript: Celtx util.js with help links to the OpenScript project.\n" + js)
 
 
+CREDITS_BLOCK = """
+    <p><b>OpenScript</b><br/>
+       Revival by Ismael A. Rodr\u00edguez<br/>
+       <a href="%s" target="_blank">%s</a>
+    </p>
+    <p></p>
+    <p><b>Original program:</b></p>
+    <p>Celtx 2.9.7 by the Celtx team (Greyfirst Corp.)</p>
+    <p></p>""" % (PROJECT_URL, PROJECT_URL)
+
+
+def write_branded_credits(app):
+    """About dialog credits: OpenScript revival first, original credits kept."""
+    with zipfile.ZipFile(os.path.join(app, "chrome", "celtx.jar")) as z:
+        page = z.read("content/celtx/credits.xhtml").decode("utf-8")
+    marker = '<div style="height: 300px;"/>'
+    assert marker in page
+    page = page.replace(marker, marker + CREDITS_BLOCK, 1)
+    with open(os.path.join(app, "chrome", "openscript-branding", "credits.xhtml"),
+              "w", encoding="utf-8", newline="") as f:
+        f.write(page)
+
+
 def rebrand(app, version):
     version = version.lstrip("v")
     for jar in ("celtx.jar", "celtx-es-ES.jar"):
@@ -190,6 +213,7 @@ def rebrand(app, version):
         if os.path.exists(path):
             rebrand_jar(path, version)
     write_branded_util(app)
+    write_branded_credits(app)
 
 
 # ---------------------------------------------------------------------------
