@@ -258,7 +258,8 @@ jobs:
         run: |
           hdiutil attach dmg/*.dmg -mountpoint /Volumes/OpenScript -nobrowse
           cp -R /Volumes/OpenScript/OpenScript.app "$RUNNER_TEMP/"
-          hdiutil detach /Volumes/OpenScript
+          for i in 1 2 3 4 5; do hdiutil detach /Volumes/OpenScript && break || sleep 3; done
+          [ ! -d /Volumes/OpenScript ] || hdiutil detach -force /Volumes/OpenScript
           codesign --verify --deep --strict "$RUNNER_TEMP/OpenScript.app"
       - name: Selftest the bundled server (Rosetta, no Homebrew x86_64 libraries)
         run: |
