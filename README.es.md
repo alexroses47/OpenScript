@@ -127,10 +127,16 @@ ejecuta `./uninstall.sh`. Tu perfil y tus proyectos se conservan.
 
 ### Windows (10 y 11)
 
-1. Descomprime `OpenScript-*-windows.zip` donde quieras (por ejemplo, en `Documentos`).
-2. Abre **`OpenScript.exe`**.
+**Instalador (recomendado):** ejecuta `OpenScript-*-windows-setup.exe` y sigue el asistente de
+siempre, *Siguiente → Siguiente*. Puedes elegir la carpeta de instalación, crear un acceso directo
+en el escritorio y abrir los `.celtx` con OpenScript. Se instala solo para ti, sin permisos de
+administrador (o para todos los usuarios, si lo eliges), y se desinstala desde *Configuración →
+Aplicaciones*.
 
-> **Windows SmartScreen:** la primera vez que lo abras, Windows puede mostrar *«Windows protegió tu PC»*. Ocurre porque la app es nueva y no lleva una firma digital de pago, no porque sea peligrosa.
+**Portable:** descomprime `OpenScript-*-windows.zip` donde quieras y abre **`OpenScript.exe`**. No
+se instala nada.
+
+> **Windows SmartScreen:** la primera vez que abras el instalador o la app, Windows puede mostrar *«Windows protegió tu PC»*. Ocurre porque la app es nueva y no lleva una firma digital de pago, no porque sea peligrosa.
 > Pulsa **Más información → Ejecutar de todas formas**. Solo tendrás que hacerlo una vez.
 
 No necesita instalación. Para exportar a ODT/DOCX, instala [LibreOffice](https://www.libreoffice.org/).

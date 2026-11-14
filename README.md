@@ -125,10 +125,15 @@ install it (for example on openSUSE: `sudo zypper in libpng12-0`). To uninstall,
 
 ### Windows (10 and 11)
 
-1. Unzip `OpenScript-*-windows.zip` anywhere (for example, in `Documents`).
-2. Open **`OpenScript.exe`**.
+**Installer (recommended):** run `OpenScript-*-windows-setup.exe` and follow the usual
+*Next → Next* wizard. You can choose the install folder, add a desktop shortcut and open `.celtx`
+files with OpenScript. It installs just for you without administrator rights (or for all users, if
+you choose so), and it can be removed from *Settings → Apps*.
 
-> **Windows SmartScreen:** the first time you open it, Windows may show *"Windows protected your PC"*. This happens because the app is new and not code-signed by a paid certificate, not because it is harmful.
+**Portable:** unzip `OpenScript-*-windows.zip` anywhere and open **`OpenScript.exe`**. Nothing is
+installed.
+
+> **Windows SmartScreen:** the first time you open the installer or the app, Windows may show *"Windows protected your PC"*. This happens because the app is new and not code-signed by a paid certificate, not because it is harmful.
 > Click **More info → Run anyway**. You only need to do it once.
 
 No installation needed. To export to ODT/DOCX, install [LibreOffice](https://www.libreoffice.org/).
