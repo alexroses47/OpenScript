@@ -178,9 +178,116 @@ jobs:
             dist/*.zip
             dist/*-windows-setup.exe
 
+  macos:
+    # Intel runner: Wine is x86_64 anyway, so an x86_64 server makes a single
+    # .app for Intel Macs and (through Rosetta 2) Apple Silicon.
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch original Celtx 2.9.7 binaries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$UPSTREAM_TAG" -R "$GITHUB_REPOSITORY" -D upstream
+          (cd upstream && shasum -a 256 -c ../packaging/upstream.sha256)
+      - name: Install Pango and 7-Zip (Homebrew)
+        run: brew install pango sevenzip
+      - name: Install Python requirements
+        run: python -m pip install -r server/requirements.txt -r packaging/requirements-build.txt
+      - name: Assemble the Windows build of the engine
+        run: |
+          python scripts/assemble.py windows \
+            --linux-tar "upstream/$LINUX_TAR" --win-paf "upstream/$WIN_PAF" --out win
+      - name: Freeze the server with its Pango libraries
+        run: |
+          LIB="$(brew --prefix)/lib"
+          BIN=()
+          for l in libgobject-2.0.0.dylib libglib-2.0.0.dylib libpango-1.0.0.dylib \
+                   libpangoft2-1.0.0.dylib libharfbuzz.0.dylib libharfbuzz-subset.0.dylib \
+                   libfontconfig.1.dylib libfreetype.6.dylib; do
+            BIN+=(--add-binary "$LIB/$l:.")
+          done
+          python -m PyInstaller server/launcher.py --name openscript-server --onedir \
+            --paths server --hidden-import server --hidden-import exporters "${BIN[@]}" \
+            --distpath pyi-dist --workpath pyi-build --noconfirm --log-level WARN
+      - name: Selftest the frozen server without Homebrew
+        run: |
+          # hide Homebrew so only the bundled libraries can be used
+          sudo mv "$(brew --prefix)/Cellar" "$(brew --prefix)/Cellar.off"
+          FONTCONFIG_FILE="$PWD/packaging/macos/fonts.conf" pyi-dist/openscript-server/openscript-server --selftest \
+            || { cat "$TMPDIR/openscript-server.log"; status=1; }
+          sudo mv "$(brew --prefix)/Cellar.off" "$(brew --prefix)/Cellar"
+          tail -2 "$TMPDIR/openscript-server.log"
+          exit ${status:-0}
+      - name: Fetch Wine for macOS (pinned, checksum-verified)
+        run: |
+          curl -fsSL -o wine-staging-11.21-osx64.tar.xz \
+            https://github.com/Gcenx/macOS_Wine_builds/releases/download/11.21/wine-staging-11.21-osx64.tar.xz
+          grep ' wine-staging-11.21-osx64.tar.xz$' packaging/tools.sha256 | shasum -a 256 -c -
+      - name: Build OpenScript.app and the disk image
+        run: |
+          packaging/macos/build-macos.sh win/OpenScript wine-staging-11.21-osx64.tar.xz \
+            pyi-dist/openscript-server dist "${GITHUB_REF_NAME//\//-}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenScript-macos
+          path: dist/*.dmg
+
+  macos-test:
+    # Apple Silicon: the app's x86_64 parts run through Rosetta 2
+    needs: macos
+    runs-on: macos-14
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: OpenScript-macos
+          path: dmg
+      - name: Rosetta 2
+        run: |
+          /usr/bin/arch -x86_64 /usr/bin/true 2>/dev/null \
+            || sudo softwareupdate --install-rosetta --agree-to-license
+          /usr/bin/arch -x86_64 /usr/bin/true && echo "Rosetta OK"
+      - name: Install from the disk image
+        run: |
+          hdiutil attach dmg/*.dmg -mountpoint /Volumes/OpenScript -nobrowse
+          cp -R /Volumes/OpenScript/OpenScript.app "$RUNNER_TEMP/"
+          hdiutil detach /Volumes/OpenScript
+          codesign --verify --deep --strict "$RUNNER_TEMP/OpenScript.app"
+      - name: Selftest the bundled server (Rosetta, no Homebrew x86_64 libraries)
+        run: |
+          R="$RUNNER_TEMP/OpenScript.app/Contents/Resources"
+          FONTCONFIG_FILE="$R/server/fonts.conf" "$R/server/openscript-server" --selftest \
+            || { cat "$TMPDIR/openscript-server.log"; exit 1; }
+          grep "SELFTEST OK" "$TMPDIR/openscript-server.log"
+      - name: Smoke test (start the app, check Wine and the server)
+        run: |
+          SUPPORT="$HOME/Library/Application Support/OpenScript"
+          "$RUNNER_TEMP/OpenScript.app/Contents/MacOS/OpenScript" &
+          for i in $(seq 1 60); do
+            pgrep -f 'app/celtx.exe' >/dev/null && break
+            sleep 5
+          done
+          sleep 30
+          screencapture -x "$RUNNER_TEMP/openscript-macos.png" || true
+          echo "--- launcher log"; cat "$SUPPORT/openscript.log" || true
+          pgrep -fl 'celtx.exe' || { echo "engine is not running"; exit 1; }
+          TOKEN=$(cat "$SUPPORT/token")
+          code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:47890/?token=$TOKEN")
+          echo "server answered: $code"
+          [ "$code" = 200 ]
+          "$RUNNER_TEMP/OpenScript.app/Contents/Resources/wine/bin/wineserver" -k || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: macos-smoke-test-screenshot
+          path: ${{ runner.temp }}/openscript-macos.png
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [linux, appimage, windows]
+    needs: [linux, appimage, windows, macos, macos-test]
     runs-on: ubuntu-22.04
     permissions:
       contents: write
@@ -195,4 +302,5 @@ jobs:
           gh release create "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" \
             --title "OpenScript $GITHUB_REF_NAME" --generate-notes \
             out/OpenScript-appimage/*.AppImage out/OpenScript-linux/*.tar.gz \
-            out/OpenScript-windows/*-windows-setup.exe out/OpenScript-windows/*.zip
+            out/OpenScript-windows/*-windows-setup.exe out/OpenScript-windows/*.zip \\
+            out/OpenScript-macos/*.dmg
