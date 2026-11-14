@@ -141,11 +141,24 @@ se instala nada.
 
 No necesita instalación. Para exportar a ODT/DOCX, instala [LibreOffice](https://www.libreoffice.org/).
 
-### macOS
+### macOS (Apple Silicon e Intel)
 
-No es compatible. El motor de Celtx 2.9.7 para Mac es de 32 bits, y macOS dejó de ejecutar
-programas de 32 bits a partir de Catalina (10.15). Tus archivos `.celtx` se pueden abrir y
-exportar en Linux o Windows.
+1. Abre `OpenScript-*-macos.dmg` y arrastra **OpenScript** a **Aplicaciones**.
+2. Abre OpenScript desde Aplicaciones. El primer arranque tarda un poco más mientras se prepara.
+
+- **En Apple Silicon (M1 y posteriores) hace falta Rosetta 2.** Si no está instalado, OpenScript te
+  avisa; se instala desde Terminal con `softwareupdate --install-rosetta`.
+- **La primera vez:** la app no está notarizada por Apple, así que macOS la bloquea la primera vez:
+  - **macOS 15 o posterior:** después del aviso, ve a *Ajustes del Sistema → Privacidad y
+    seguridad* y pulsa **Abrir igualmente**.
+  - **macOS 14 o anterior:** clic derecho sobre la app → **Abrir**.
+  - **Desde Terminal (cualquier versión):** ejecuta `xattr -dr com.apple.quarantine /Applications/OpenScript.app`.
+- **Cómo funciona:** la versión original de Celtx para Mac es de 32 bits y ya no funciona en macOS
+  actual, así que OpenScript para Mac ejecuta la versión de Windows del motor con un
+  [Wine](https://www.winehq.org) incluido, y el servidor de PDF y exportación funciona de forma nativa.
+- **Versiones futuras de macOS:** Apple anunció que después de macOS 27 Rosetta 2 dejará de ser una
+  herramienta de uso general (solo se mantendrá para algunos juegos antiguos). OpenScript para Mac
+  depende de ella, así que podría dejar de funcionar en versiones posteriores.
 
 ## Cómo está hecho
 
@@ -162,8 +175,9 @@ de Celtx 2.9.7 (Linux y Windows) y les aplica los cambios de este repositorio:
 | `scripts/assemble.py` | Arma los paquetes a partir de los binarios originales. |
 | `packaging/linux/` | Instalador y desinstalador del paquete `.tar.gz`. |
 | `packaging/appimage/` | Construcción del AppImage (libpng 1.2, GTK2, servidor congelado). |
+| `packaging/macos/` | App de macOS: Wine con el motor de Windows, servidor nativo, lanzador en Swift para abrir archivos desde el Finder, `.dmg`. |
 | `build.sh` | Compilación local en un solo comando. |
-| `.github/workflows/` | Compilación automática del AppImage, el paquete de Linux y el de Windows, con pruebas en varias distribuciones. |
+| `.github/workflows/` | Compilación automática del AppImage, el paquete de Linux, el instalador y el zip de Windows, y la app de macOS, con pruebas en varias distribuciones Linux y en Apple Silicon. |
 
 Los binarios originales de Celtx 2.9.7 se publican como archivos de la release
 `upstream-2.9.7`, para no depender de enlaces que ya no existen. El código fuente original
@@ -184,9 +198,9 @@ cd OpenScript
 - **AppImage:** se compila dentro de un contenedor de Ubuntu 22.04, así que solo necesitas
   `podman` o `docker`. Si ya estás en Ubuntu 22.04 con las dependencias, se compila directamente.
 - **Paquete `.tar.gz`:** necesita `python3`, `gcc` y `7z`.
-- **Windows:** el paquete lo compila GitHub Actions
+- **Windows y macOS:** los paquetes los compila GitHub Actions
   ([`.github/workflows/build.yml`](.github/workflows/build.yml)). Si haces un *fork*, obtendrás
-  tus propios paquetes de Linux y Windows automáticamente.
+  tus propios paquetes de Linux, Windows y macOS automáticamente.
 
 ## Apoya a OpenScript
 
