@@ -308,5 +308,5 @@ jobs:
           gh release create "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" \
             --title "OpenScript $GITHUB_REF_NAME" --generate-notes \
             out/OpenScript-appimage/*.AppImage out/OpenScript-linux/*.tar.gz \
-            out/OpenScript-windows/*-windows-setup.exe out/OpenScript-windows/*.zip \\
+            out/OpenScript-windows/*-windows-setup.exe out/OpenScript-windows/*.zip \
             out/OpenScript-macos/*.dmg
