@@ -92,6 +92,8 @@ no longer exist. OpenScript brings it back to life:
 
 ## Download and install
 
+[![Latest release](https://img.shields.io/github/v/release/alexroses47/OpenScript?label=download&sort=semver)](https://github.com/alexroses47/OpenScript/releases/latest)
+
 Get the latest version from the **[Releases](https://github.com/alexroses47/OpenScript/releases/latest)** page.
 
 ### Linux (x86_64): AppImage (recommended)
@@ -125,6 +127,9 @@ install it (for example on openSUSE: `sudo zypper in libpng12-0`). To uninstall,
 
 1. Unzip `OpenScript-*-windows.zip` anywhere (for example, in `Documents`).
 2. Open **`OpenScript.exe`**.
+
+> **Windows SmartScreen:** the first time you open it, Windows may show *"Windows protected your PC"*. This happens because the app is new and not code-signed by a paid certificate, not because it is harmful.
+> Click **More info → Run anyway**. You only need to do it once.
 
 No installation needed. To export to ODT/DOCX, install [LibreOffice](https://www.libreoffice.org/).
 

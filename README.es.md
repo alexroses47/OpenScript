@@ -93,7 +93,9 @@ servidores que ya no existen. OpenScript lo devuelve a la vida:
 
 ## Descargar e instalar
 
-Descarga la última versión desde la página de **Releases**.
+[![Última versión](https://img.shields.io/github/v/release/alexroses47/OpenScript?label=descargar&sort=semver)](https://github.com/alexroses47/OpenScript/releases/latest)
+
+Descarga la última versión desde la página de **[Releases](https://github.com/alexroses47/OpenScript/releases/latest)**.
 
 ### Linux (x86_64): AppImage (recomendado)
 
@@ -127,6 +129,9 @@ ejecuta `./uninstall.sh`. Tu perfil y tus proyectos se conservan.
 
 1. Descomprime `OpenScript-*-windows.zip` donde quieras (por ejemplo, en `Documentos`).
 2. Abre **`OpenScript.exe`**.
+
+> **Windows SmartScreen:** la primera vez que lo abras, Windows puede mostrar *«Windows protegió tu PC»*. Ocurre porque la app es nueva y no lleva una firma digital de pago, no porque sea peligrosa.
+> Pulsa **Más información → Ejecutar de todas formas**. Solo tendrás que hacerlo una vez.
 
 No necesita instalación. Para exportar a ODT/DOCX, instala [LibreOffice](https://www.libreoffice.org/).
 
