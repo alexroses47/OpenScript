@@ -11,6 +11,22 @@ Una reimplementación del legendario Celtx 2.9.7, actualizada para que funcione 
 > (Mozilla Public License 2.0). **No está afiliado, patrocinado ni respaldado por Celtx Inc.**
 > «Celtx» es una marca registrada de su respectivo propietario. Consulta [NOTICE.md](NOTICE.md).
 
+## Por qué existe OpenScript
+
+Celtx 2.9.7 era sencillo y útil: abrías el programa y escribías tu guion de cine, tu obra de teatro
+o tu cómic con el formato correcto, sin cuentas, sin suscripciones y sin depender de internet.
+Muchos aprendimos a escribir guiones con él.
+
+Cuando Celtx abandonó la versión de escritorio, ese programa quedó atrapado en la obsolescencia:
+dejó de instalarse en sistemas actuales y sus funciones clave, como exportar a PDF, dejaron de
+funcionar porque dependían de servidores que se apagaron. Pero el programa en sí seguía siendo
+bueno, y su código es abierto.
+
+**OpenScript nace de la convicción de que una herramienta así no merece quedar encerrada en la
+obsolescencia.** El objetivo es mantenerla viva, libre y funcionando en equipos actuales, y
+asegurarse de que lo que escribas en ella se pueda abrir siempre, gracias a formatos abiertos como
+Fountain.
+
 ## Qué aporta respecto a Celtx 2.9.7
 
 Celtx de escritorio dejó de mantenerse en 2017 y varias de sus funciones dependían de
@@ -37,7 +53,23 @@ servidores que ya no existen. OpenScript lo devuelve a la vida:
 
 Descarga la última versión desde la página de **Releases**.
 
-### Linux (x86_64)
+### Linux (x86_64): AppImage (recomendado)
+
+Un solo archivo que funciona en casi cualquier distribución actual (Ubuntu 22.04 o posterior,
+Fedora, Debian 12, openSUSE, Arch, Mint…) **sin instalar nada más**: trae dentro todo lo que
+necesita.
+
+```sh
+chmod +x OpenScript-*-x86_64.AppImage
+./OpenScript-*-x86_64.AppImage
+```
+
+- **Menú de aplicaciones:** para añadirlo y abrir los `.celtx` con doble clic, ejecuta
+  `./OpenScript-*-x86_64.AppImage --instalar`. Para quitarlo del menú, usa `--desinstalar`.
+- **Alternativa:** gestores como [Gear Lever](https://flathub.org/apps/it.mijorus.gearlever) o
+  AppImageLauncher hacen lo mismo de forma gráfica.
+
+### Linux (x86_64): paquete con instalador
 
 ```sh
 tar xzf OpenScript-*-linux-x86_64.tar.gz
@@ -46,10 +78,8 @@ cd OpenScript
 ```
 
 El instalador comprueba las dependencias; si falta algo, te da el comando exacto para
-instalarlo (por ejemplo, en openSUSE: `sudo zypper in libpng12-0`). Después, abre
-**OpenScript** desde el menú de aplicaciones.
-
-Para desinstalar: `./uninstall.sh`. Tu perfil y tus proyectos se conservan.
+instalarlo (por ejemplo, en openSUSE: `sudo zypper in libpng12-0`). Para desinstalar,
+ejecuta `./uninstall.sh`. Tu perfil y tus proyectos se conservan.
 
 ### Windows (10 y 11)
 
@@ -75,23 +105,33 @@ de Celtx 2.9.7 (Linux y Windows) y les aplica los cambios de este repositorio:
 | `overlay/linux/` | Lanzador, ajuste de tema GTK y estilos de legibilidad. |
 | `server/` | Servidor local (Python) de PDF, vista previa y exportación (Fountain, FDX, ODT, DOCX), más el lanzador de Windows. |
 | `scripts/assemble.py` | Arma los paquetes a partir de los binarios originales. |
-| `packaging/linux/` | Instalador y desinstalador para Linux. |
-| `.github/workflows/` | Compilación automática de los paquetes de Linux y Windows. |
+| `packaging/linux/` | Instalador y desinstalador del paquete `.tar.gz`. |
+| `packaging/appimage/` | Construcción del AppImage (libpng 1.2, GTK2, servidor congelado). |
+| `build.sh` | Compilación local en un solo comando. |
+| `.github/workflows/` | Compilación automática del AppImage, el paquete de Linux y el de Windows, con pruebas en varias distribuciones. |
 
 Los binarios originales de Celtx 2.9.7 se publican como archivos de la release
 `upstream-2.9.7`, para no depender de enlaces que ya no existen. El código fuente original
 de Celtx 2.9.7 (MPL 2.0) está publicado por Celtx como `celtx-2-9-7-src.tar.bz2`.
 
-### Compilar localmente (Linux)
+### Compilar tú mismo
+
+Un solo comando descarga los binarios originales (verificando sus sumas SHA-256) y genera el
+paquete en `dist/`:
 
 ```sh
-python3 scripts/assemble.py linux \
-  --linux-tar Celtx-2.9.7-64.tar.bz2 \
-  --win-paf CeltxPortable_2.9.7_Spanish_Development_Test_1.paf.exe \
-  --out dist --wheels
+git clone https://github.com/alexroses47/OpenScript.git
+cd OpenScript
+./build.sh            # AppImage
+./build.sh tarball    # paquete .tar.gz con instalador
 ```
 
-Requiere `gcc` y `7z`.
+- **AppImage:** se compila dentro de un contenedor de Ubuntu 22.04, así que solo necesitas
+  `podman` o `docker`. Si ya estás en Ubuntu 22.04 con las dependencias, se compila directamente.
+- **Paquete `.tar.gz`:** necesita `python3`, `gcc` y `7z`.
+- **Windows:** el paquete lo compila GitHub Actions
+  ([`.github/workflows/build.yml`](.github/workflows/build.yml)). Si haces un *fork*, obtendrás
+  tus propios paquetes de Linux y Windows automáticamente.
 
 ## Licencia
 

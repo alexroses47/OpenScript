@@ -74,11 +74,16 @@ jobs:
       - name: Test the bundled server on other distributions
         run: |
           cd dist && ./*.AppImage --appimage-extract >/dev/null
-          for img in fedora:latest opensuse/tumbleweed:latest ubuntu:24.04 debian:12; do
-            echo "== $img"
-            docker run --rm -v "$PWD/squashfs-root:/app:ro" "$img" sh -c \
-              '/app/usr/lib/openscript/server/openscript-server --selftest; tail -3 /tmp/openscript-server.log; grep -q "SELFTEST OK" /tmp/openscript-server.log'
-          done
+          test_on() {  # image, command that installs fonts like a desktop has
+            echo "== $1"
+            docker run --rm -v "$PWD/squashfs-root:/app:ro" "$1" sh -c "$2 >/dev/null 2>&1;
+              /app/usr/lib/openscript/server/openscript-server --selftest;
+              tail -2 /tmp/openscript-server.log; grep -q 'SELFTEST OK' /tmp/openscript-server.log"
+          }
+          test_on fedora:latest "dnf -y -q install fontconfig liberation-mono-fonts"
+          test_on opensuse/tumbleweed:latest "zypper -n -q in fontconfig liberation-fonts"
+          test_on ubuntu:24.04 "apt-get update && apt-get install -y fontconfig fonts-liberation"
+          test_on debian:12 "apt-get update && apt-get install -y fontconfig fonts-liberation"
           rm -rf squashfs-root
       - uses: actions/upload-artifact@v4
         with:
