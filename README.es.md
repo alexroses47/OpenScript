@@ -4,7 +4,7 @@
 
 # OpenScript
 
-🌐 [English](README.md) · **Español**
+🌐 [English](README.md) · **Español** · ❤️ [Apoya el proyecto](#apoya-a-openscript)
 
 **Programa de código abierto para escribir guiones de cine, cómics, teatro, radio y más.**
 Una reimplementación del legendario Celtx 2.9.7, actualizada para que funcione en equipos actuales.
@@ -144,6 +144,29 @@ cd OpenScript
 - **Windows:** el paquete lo compila GitHub Actions
   ([`.github/workflows/build.yml`](.github/workflows/build.yml)). Si haces un *fork*, obtendrás
   tus propios paquetes de Linux y Windows automáticamente.
+
+## Apoya a OpenScript
+
+OpenScript es gratis y lo seguirá siendo siempre. Si te resulta útil y quieres aportar algo, puedes
+hacer una donación en criptomonedas. Lo que se recibe se destina a las herramientas de IA y a las
+máquinas de compilación que ayudan a que este proyecto de código abierto avance más rápido.
+
+**USDC en la red Solana**
+
+<img src="docs/donate/usdc-solana-qr.png" alt="Código QR para donar USDC (Solana)" width="200">
+
+```
+DE3ZBDqJ1iUunRTz7KkQQj8QrNFdHkyjv38FNQHLchJT
+```
+
+> [!WARNING]
+> Envía únicamente **USDC** por la red **Solana** a esta dirección. Cualquier otra moneda, o la
+> misma moneda enviada por otra red, se perderá y no se podrá recuperar.
+
+**Ten en cuenta:** las donaciones son voluntarias y no se reembolsan. No pagan nada a cambio: ni
+productos, ni servicios, ni ventajas, ni versiones anticipadas o exclusivas, ni soporte
+prioritario, ni voz en las decisiones del proyecto. Todas las versiones siguen siendo gratuitas y
+públicas para todo el mundo.
 
 ## Licencia
 

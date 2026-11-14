@@ -4,7 +4,7 @@
 
 # OpenScript
 
-🌐 **English** · [Español](README.es.md)
+🌐 **English** · [Español](README.es.md) · ❤️ [Support the project](#support-openscript)
 
 **Open-source software for writing screenplays, comics, stage plays, radio plays and more.**
 A re-implementation of the legendary Celtx 2.9.7, brought back to life for today's computers.
@@ -141,6 +141,28 @@ cd OpenScript
 - **Windows:** the package is built by GitHub Actions
   ([`.github/workflows/build.yml`](.github/workflows/build.yml)). If you fork the repository, you
   get your own Linux and Windows packages automatically.
+
+## Support OpenScript
+
+OpenScript is free and will always be free. If it's useful to you and you'd like to give
+something back, you can make a donation in crypto. Contributions go toward the AI tools and the
+build machines that help this open-source project move faster.
+
+**USDC on the Solana network**
+
+<img src="docs/donate/usdc-solana-qr.png" alt="USDC (Solana) donation QR code" width="200">
+
+```
+DE3ZBDqJ1iUunRTz7KkQQj8QrNFdHkyjv38FNQHLchJT
+```
+
+> [!WARNING]
+> Only send **USDC** over the **Solana** network to this address. Any other coin, or the same
+> coin sent over a different network, will be lost and cannot be recovered.
+
+**Please note:** donations are voluntary and cannot be refunded. They don't pay for anything in
+return: no product, service, perks, early or exclusive builds, priority support, or influence
+over the project's direction. Every release remains free and public for everyone.
 
 ## License
 
