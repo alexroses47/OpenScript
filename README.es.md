@@ -178,8 +178,7 @@ cd OpenScript
 ## Apoya a OpenScript
 
 OpenScript es gratis y lo seguirá siendo siempre. Si te resulta útil y quieres aportar algo, puedes
-hacer una donación en criptomonedas. Lo que se recibe se destina a las herramientas de IA y a las
-máquinas de compilación que ayudan a que este proyecto de código abierto avance más rápido.
+hacer una donación en criptomonedas.
 
 **USDC en la red Solana**
 

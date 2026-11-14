@@ -175,8 +175,7 @@ cd OpenScript
 ## Support OpenScript
 
 OpenScript is free and will always be free. If it's useful to you and you'd like to give
-something back, you can make a donation in crypto. Contributions go toward the AI tools and the
-build machines that help this open-source project move faster.
+something back, you can make a donation in crypto.
 
 **USDC on the Solana network**
 
