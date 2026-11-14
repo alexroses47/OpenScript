@@ -85,7 +85,8 @@ cat > "$AD/usr/share/mime/packages/openscript.xml" <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/x-celtx">
-    <comment>Proyecto de guion (.celtx)</comment>
+    <comment>Script project (.celtx)</comment>
+    <comment xml:lang="es">Proyecto de guion (.celtx)</comment>
     <glob pattern="*.celtx"/>
   </mime-type>
 </mime-info>

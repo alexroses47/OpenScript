@@ -3251,10 +3251,13 @@ var gScriptController = {
           if (! ok) {
             try { if (result && result.exists()) result.remove(false); }
             catch (ex) {}
-            window.alert("No se pudo exportar el guion.\n\n"
-              + "Comprueba que Celtx se abrió con su lanzador (que arranca "
-              + "el servidor de exportación local) y revisa el registro "
-              + "/tmp/celtx-pdfserver.log");
+            window.alert(osText(
+              "No se pudo exportar el guion.\n\nAbre OpenScript con su "
+              + "lanzador (que arranca el servidor de exportación local) y "
+              + "revisa el registro openscript-server.log en la carpeta temporal.",
+              "The script could not be exported.\n\nStart OpenScript with its "
+              + "launcher (it starts the local export server) and check "
+              + "openscript-server.log in the temporary folder."));
             return;
           }
           try {
@@ -3262,7 +3265,8 @@ var gScriptController = {
             result.moveTo(this.dest.parent, this.dest.leafName);
           }
           catch (ex) {
-            window.alert("No se pudo guardar el archivo:\n" + ex);
+            window.alert(osText("No se pudo guardar el archivo:\n",
+                                "The file could not be saved:\n") + ex);
           }
         }
       };
@@ -3273,7 +3277,8 @@ var gScriptController = {
     }
     catch (ex) {
       dump("*** exportScriptViaServer: " + ex + "\n");
-      window.alert("No se pudo exportar el guion:\n" + ex);
+      window.alert(osText("No se pudo exportar el guion:\n",
+                          "The script could not be exported:\n") + ex);
     }
   },
 
@@ -5157,3 +5162,16 @@ window.addEventListener("load", function () {
     }, false);
   }
 }, false);
+
+
+// OpenScript: pick a message in the interface language (Spanish or English).
+function osText (es, en) {
+  try {
+    var reg = Components.classes["@mozilla.org/chrome/chrome-registry;1"]
+      .getService(Components.interfaces.nsIXULChromeRegistry);
+    if (reg.getSelectedLocale("celtx").indexOf("es") == 0)
+      return es;
+  }
+  catch (ex) {}
+  return en;
+}

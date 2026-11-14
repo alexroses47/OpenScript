@@ -1,12 +1,18 @@
 #!/bin/sh
 # OpenScript AppImage entry point.
 #
-#   ./OpenScript-x86_64.AppImage [archivo.celtx]   open OpenScript
-#   ./OpenScript-x86_64.AppImage --instalar        add to the applications menu
-#   ./OpenScript-x86_64.AppImage --desinstalar     remove it from the menu
+#   ./OpenScript-x86_64.AppImage [file.celtx]            open OpenScript
+#   ./OpenScript-x86_64.AppImage --install   (--instalar)    add to the applications menu
+#   ./OpenScript-x86_64.AppImage --uninstall (--desinstalar) remove it from the menu
 HERE="$(dirname "$(readlink -f "$0")")"
 APP="$HERE/usr/lib/openscript"
 SELF="${APPIMAGE:-$HERE/AppRun}"
+
+# Messages in Spanish or English, following the system language
+case "${LANGUAGE:-${LC_ALL:-${LC_MESSAGES:-$LANG}}}" in
+  es*) t() { echo "$1"; } ;;
+  *)   t() { echo "$2"; } ;;
+esac
 
 APPS="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
 ICONS="${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor/256x256/apps"
@@ -21,14 +27,16 @@ case "$1" in
     cp "$HERE/usr/share/mime/packages/openscript.xml" "$MIME/packages/openscript.xml"
     update-mime-database "$MIME" >/dev/null 2>&1 || true
     update-desktop-database "$APPS" >/dev/null 2>&1 || true
-    echo "OpenScript añadido al menú de aplicaciones."
-    echo "Si mueves este archivo .AppImage, vuelve a ejecutar --instalar."
+    t "OpenScript añadido al menú de aplicaciones." "OpenScript added to the applications menu."
+    t "Si mueves este archivo .AppImage, vuelve a ejecutar --instalar." \
+      "If you move this .AppImage file, run --install again."
     exit 0 ;;
   --desinstalar|--uninstall)
     rm -f "$APPS/openscript.desktop" "$ICONS/openscript.png" "$MIME/packages/openscript.xml"
     update-mime-database "$MIME" >/dev/null 2>&1 || true
     update-desktop-database "$APPS" >/dev/null 2>&1 || true
-    echo "OpenScript quitado del menú. Tu perfil (~/.greyfirst) y tus proyectos se conservan."
+    t "OpenScript quitado del menú. Tu perfil (~/.greyfirst) y tus proyectos se conservan." \
+      "OpenScript removed from the menu. Your profile (~/.greyfirst) and projects are kept."
     exit 0 ;;
 esac
 

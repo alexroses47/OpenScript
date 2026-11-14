@@ -9,4 +9,7 @@ DESK=$(xdg-user-dir DESKTOP 2>/dev/null || echo "$HOME/Desktop")
 rm -f "$DESK/openscript.desktop"
 update-mime-database "$HOME/.local/share/mime" >/dev/null 2>&1 || true
 update-desktop-database "$HOME/.local/share/applications" >/dev/null 2>&1 || true
-echo "OpenScript desinstalado. Tu perfil (~/.greyfirst) y tus proyectos se conservan."
+case "${LANGUAGE:-${LC_ALL:-${LC_MESSAGES:-$LANG}}}" in
+  es*) echo "OpenScript desinstalado. Tu perfil (~/.greyfirst) y tus proyectos se conservan." ;;
+  *)   echo "OpenScript uninstalled. Your profile (~/.greyfirst) and projects are kept." ;;
+esac
