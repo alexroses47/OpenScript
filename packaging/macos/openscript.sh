@@ -41,23 +41,23 @@ fi
 if [ ! -f "$WINEPREFIX/.openscript-ready" ]; then
   echo "creating Wine prefix in $WINEPREFIX"
   "$WINE" wineboot --init
-  # 2. Full-resolution rendering on Retina screens
-  "$WINE" reg add 'HKCU\Software\Wine\Mac Driver' /v RetinaMode /t REG_SZ /d y /f
   "$WINESERVER" -w
   touch "$WINEPREFIX/.openscript-ready"
 fi
 
-# 2. The engine scales its interface with the Windows DPI: 96 per unit of
-#    screen scale (192 on Retina). The scale comes from the native launcher
-#    (NSScreen backingScaleFactor); checked on every start, since the Mac may
-#    now be using a different monitor.
+# 2. Display scale (from the native launcher: NSScreen backingScaleFactor).
+#    Retina (2x): Wine renders at full resolution (RetinaMode) and the
+#    engine, which follows the Windows DPI, draws its interface at 192 dpi.
+#    Standard (1x): no RetinaMode and 96 dpi. Both must change together, or
+#    the interface comes out at half or double size. Checked on every start,
+#    since the Mac may now be using a different monitor.
 scale="${OPENSCRIPT_SCALE:-2}"
-case "$scale" in 1|2|3) ;; *) scale=2 ;; esac
-dpi=$((96 * scale))
-if [ "$(cat "$SUPPORT/dpi" 2>/dev/null)" != "$dpi" ]; then
+if [ "$scale" -ge 2 ] 2>/dev/null; then retina=y; dpi=192; else retina=n; dpi=96; fi
+if [ "$(cat "$SUPPORT/display" 2>/dev/null)" != "$retina $dpi" ]; then
+  "$WINE" reg add 'HKCU\Software\Wine\Mac Driver' /v RetinaMode /t REG_SZ /d $retina /f
   "$WINE" reg add 'HKCU\Control Panel\Desktop' /v LogPixels /t REG_DWORD /d $dpi /f
   "$WINESERVER" -w
-  echo "$dpi" > "$SUPPORT/dpi"
+  echo "$retina $dpi" > "$SUPPORT/display"
 fi
 
 # Per-user secret shared by the engine and the local server

@@ -278,8 +278,7 @@ jobs:
           sleep 30
           screencapture -x "$RUNNER_TEMP/openscript-macos.png" || true
           echo "--- launcher log"; cat "$SUPPORT/openscript.log" || true
-          echo "--- Windows DPI chosen for this screen: $(cat "$SUPPORT/dpi" 2>/dev/null)"
-          system_profiler SPDisplaysDataType | grep -E "Resolution|UI Looks like|Retina" || true
+          echo "--- display settings (RetinaMode, Windows DPI): $(cat "$SUPPORT/display" 2>/dev/null)"
           pgrep -fl 'celtx.exe' || { echo "engine is not running"; exit 1; }
           TOKEN=$(cat "$SUPPORT/token")
           code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:47890/?token=$TOKEN")
