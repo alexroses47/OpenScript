@@ -239,7 +239,7 @@ jobs:
   macos-test:
     # Apple Silicon: the app's x86_64 parts run through Rosetta 2
     needs: macos
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/download-artifact@v4
         with:
