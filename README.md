@@ -146,8 +146,10 @@ builds (Linux and Windows) and applies the changes in this repository:
 | Folder | Contents |
 |---|---|
 | `overlay/common/` | Changes for all platforms:<br>• no calls to dead services<br>• extended Export menu<br>• OpenScript branding (texts, welcome screen, About)<br>• help links to this project<br>• dead Celtx online services hidden<br>• interface language follows the system |
+| `patches/` | Changes to the original Celtx code (`nsCeltxService.js`, `scripteditor.js`), kept as patches against the untouched upstream files and applied when building. |
 | `overlay/linux/` | Launcher, GTK theme fix and readability styles. |
 | `server/` | Local server (Python) for PDF, preview and export (Fountain, FDX, ODT, DOCX), plus the Windows launcher. |
+| `tests/` | Layout regression tests: reference PDFs (film, comic, theatre) compared line by line on every build. |
 | `scripts/assemble.py` | Builds the packages from the original binaries. |
 | `packaging/linux/` | Installer and uninstaller for the `.tar.gz` package. |
 | `packaging/appimage/` | AppImage build (libpng 1.2, GTK2, frozen server). |

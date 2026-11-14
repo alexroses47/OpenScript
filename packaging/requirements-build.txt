@@ -1,0 +1,2 @@
+# Build-only tools (CI and packaging/appimage/Containerfile)
+pyinstaller==6.22.3

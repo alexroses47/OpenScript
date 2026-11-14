@@ -149,8 +149,10 @@ de Celtx 2.9.7 (Linux y Windows) y les aplica los cambios de este repositorio:
 | Carpeta | Contenido |
 |---|---|
 | `overlay/common/` | Cambios para todas las plataformas:<br>• servicios sin conexiones caducadas<br>• menú Exportar ampliado<br>• marca OpenScript (textos, bienvenida, «Acerca de»)<br>• enlaces de ayuda a este proyecto<br>• servicios en línea de Celtx retirados ocultos<br>• idioma de la interfaz según el sistema |
+| `patches/` | Cambios al código original de Celtx (`nsCeltxService.js`, `scripteditor.js`), guardados como parches sobre los archivos originales y aplicados al compilar. |
 | `overlay/linux/` | Lanzador, ajuste de tema GTK y estilos de legibilidad. |
 | `server/` | Servidor local (Python) de PDF, vista previa y exportación (Fountain, FDX, ODT, DOCX), más el lanzador de Windows. |
+| `tests/` | Pruebas de regresión de maquetación: PDF de referencia (cine, cómic, teatro) comparados línea por línea en cada compilación. |
 | `scripts/assemble.py` | Arma los paquetes a partir de los binarios originales. |
 | `packaging/linux/` | Instalador y desinstalador del paquete `.tar.gz`. |
 | `packaging/appimage/` | Construcción del AppImage (libpng 1.2, GTK2, servidor congelado). |

@@ -71,8 +71,7 @@ python3 -m PyInstaller "$ROOT/server/launcher.py" --name openscript-server --one
   --distpath "$WORK/pyi" --workpath "$WORK/pyi-build" --specpath "$WORK" --noconfirm --log-level WARN
 mv "$WORK/pyi/openscript-server" "$APP/server"
 rm -f "${TMPDIR:-/tmp}/openscript-server.log"
-"$APP/server/openscript-server" --selftest || true
-grep -q "SELFTEST OK" "${TMPDIR:-/tmp}/openscript-server.log" || {
+"$APP/server/openscript-server" --selftest || {
   cat "${TMPDIR:-/tmp}/openscript-server.log"; echo "server selftest failed"; exit 1; }
 
 echo "==> AppRun, desktop entry, icon, MIME type"
@@ -93,7 +92,9 @@ cat > "$AD/usr/share/mime/packages/openscript.xml" <<'EOF'
 EOF
 
 echo "==> appimagetool"
-curl -fsSL -o "$WORK/appimagetool" "$APPIMAGETOOL_URL"
+curl -fsSL -o "$WORK/appimagetool-x86_64.AppImage" "$APPIMAGETOOL_URL"
+(cd "$WORK" && grep appimagetool "$ROOT/packaging/tools.sha256" | sha256sum -c -)
+mv "$WORK/appimagetool-x86_64.AppImage" "$WORK/appimagetool"
 chmod +x "$WORK/appimagetool"
 OUTFILE="$OUT/OpenScript-$VERSION-x86_64.AppImage"
 ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 "$WORK/appimagetool" --no-appstream "$AD" "$OUTFILE"
