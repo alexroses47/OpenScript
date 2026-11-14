@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>OpenScript</string>
+  <key>CFBundleDisplayName</key>
+  <string>OpenScript</string>
+  <key>CFBundleIdentifier</key>
+  <string>io.github.alexroses47.openscript</string>
+  <key>CFBundleExecutable</key>
+  <string>OpenScript</string>
+  <key>CFBundleIconFile</key>
+  <string>openscript</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>@VERSION@</string>
+  <key>CFBundleVersion</key>
+  <string>@VERSION@</string>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>en</string>
+  <key>CFBundleLocalizations</key>
+  <array>
+    <string>en</string>
+    <string>es</string>
+  </array>
+  <key>LSMinimumSystemVersion</key>
+  <string>11.0</string>
+  <key>NSHighResolutionCapable</key>
+  <true/>
+  <key>LSApplicationCategoryType</key>
+  <string>public.app-category.productivity</string>
+  <key>NSHumanReadableCopyright</key>
+  <string>OpenScript, based on Celtx 2.9.7 (MPL 2.0). Not affiliated with Celtx Inc.</string>
+
+  <!-- .celtx projects -->
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeName</key>
+      <string>OpenScript project</string>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>LSHandlerRank</key>
+      <string>Owner</string>
+      <key>CFBundleTypeIconFile</key>
+      <string>openscript</string>
+      <key>CFBundleTypeExtensions</key>
+      <array>
+        <string>celtx</string>
+      </array>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>io.github.alexroses47.openscript.celtx</string>
+      </array>
+    </dict>
+  </array>
+  <key>UTExportedTypeDeclarations</key>
+  <array>
+    <dict>
+      <key>UTTypeIdentifier</key>
+      <string>io.github.alexroses47.openscript.celtx</string>
+      <key>UTTypeDescription</key>
+      <string>OpenScript project</string>
+      <key>UTTypeConformsTo</key>
+      <array>
+        <string>public.data</string>
+      </array>
+      <key>UTTypeTagSpecification</key>
+      <dict>
+        <key>public.filename-extension</key>
+        <array>
+          <string>celtx</string>
+        </array>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

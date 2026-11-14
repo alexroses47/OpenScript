@@ -49,6 +49,28 @@ def shared_token():
     return token
 
 
+def use_bundled_dylibs():
+    """macOS: make WeasyPrint load the Pango/GLib dylibs shipped in the app.
+
+    WeasyPrint dlopen()s libraries by bare name (libpango-1.0.0.dylib...),
+    which dyld only looks for in system folders; users have no Homebrew.
+    """
+    if sys.platform != "darwin" or not getattr(sys, "frozen", False):
+        return
+    import cffi
+    bundled = getattr(sys, "_MEIPASS", base_dir())
+    original = cffi.FFI.dlopen
+
+    def dlopen(self, name, flags=0):
+        if isinstance(name, str) and not os.path.isabs(name):
+            candidate = os.path.join(bundled, name)
+            if os.path.exists(candidate):
+                return original(self, candidate, flags)
+        return original(self, name, flags)
+
+    cffi.FFI.dlopen = dlopen
+
+
 def port_in_use(port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(0.5)
@@ -147,6 +169,7 @@ def main():
     if "--selftest" not in sys.argv:
         # must be set before importing server, and is inherited by the engine
         os.environ["OPENSCRIPT_TOKEN"] = shared_token()
+    use_bundled_dylibs()
     import server  # noqa: E402  (after redirecting output)
 
     if "--selftest" in sys.argv:
@@ -157,7 +180,7 @@ def main():
             return 1
 
     if "--server" in sys.argv:
-        # Server only (used by the Linux launcher inside the AppImage).
+        # Server only (Linux AppImage and macOS app launchers).
         if not port_in_use(server.PORT):
             server.serve()
         return 0
