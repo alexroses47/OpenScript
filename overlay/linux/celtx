@@ -154,12 +154,17 @@ if [ -f "$dist_bin/defaults/profile/chrome/userChrome.css" ]; then
       cp "$dist_bin/defaults/profile/chrome/userChrome.css" "$prof/chrome/userChrome.css"
   done
 fi
-# Start the local PDF render server (replacement for render.celtx.com).
+# Start the local PDF/export server (replacement for render.celtx.com).
+# Frozen binary in the AppImage, Python venv in the tar.gz install. If the
+# port is already taken by another instance, the new server just exits.
 pdf_pid=""
-if [ -x "$dist_bin/pdfserver/venv/bin/python" ] && \
-   ! curl -s -m 1 http://127.0.0.1:47890/ >/dev/null 2>&1; then
+srv_log="${TMPDIR:-/tmp}/openscript-server.log"
+if [ -x "$dist_bin/server/openscript-server" ]; then
+  "$dist_bin/server/openscript-server" --server >/dev/null 2>&1 &
+  pdf_pid=$!
+elif [ -x "$dist_bin/pdfserver/venv/bin/python" ]; then
   "$dist_bin/pdfserver/venv/bin/python" "$dist_bin/pdfserver/server.py" \
-    >"${TMPDIR:-/tmp}/openscript-server.log" 2>&1 &
+    >"$srv_log" 2>&1 &
   pdf_pid=$!
 fi
 

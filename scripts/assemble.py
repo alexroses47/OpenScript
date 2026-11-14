@@ -12,6 +12,7 @@ those changes:
 Usage:
   scripts/assemble.py linux   --linux-tar T --win-paf P --out DIR [--wheels]
   scripts/assemble.py windows --linux-tar T --win-paf P --out DIR
+  scripts/assemble.py linux   ... --app-dir DIR   (bare app, for the AppImage)
 """
 import argparse
 import glob
@@ -146,6 +147,13 @@ def build_linux(args, work):
     os.chmod(os.path.join(app, "celtx"), 0o755)
     touch(os.path.join(app, ".autoreg"))
 
+    if args.app_dir:  # raw app folder (used to build the AppImage)
+        if os.path.exists(args.app_dir):
+            shutil.rmtree(args.app_dir)
+        shutil.move(app, args.app_dir)
+        print("app folder", args.app_dir)
+        return
+
     pkg = os.path.join(work, "OpenScript")
     os.makedirs(pkg)
     shutil.move(app, os.path.join(pkg, "openscript"))
@@ -203,7 +211,11 @@ def main():
     ap.add_argument("--version", default="dev")
     ap.add_argument("--wheels", action="store_true",
                     help="bundle Python wheels for offline install (Linux)")
+    ap.add_argument("--app-dir", help="linux: write the bare app folder here "
+                    "instead of the tar.gz package")
     args = ap.parse_args()
+    if args.app_dir:
+        args.app_dir = os.path.abspath(args.app_dir)
     args.out = os.path.abspath(args.out)
     with tempfile.TemporaryDirectory() as work:
         (build_linux if args.platform == "linux" else build_windows)(args, work)

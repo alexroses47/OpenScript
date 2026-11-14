@@ -60,6 +60,12 @@ def main():
             print("SELFTEST FAILED:", repr(ex))
             return 1
 
+    if "--server" in sys.argv:
+        # Server only (used by the Linux launcher inside the AppImage).
+        if not port_in_use(server.PORT):
+            server.serve()
+        return 0
+
     if not port_in_use(server.PORT):
         threading.Thread(target=server.serve, daemon=True).start()
 

@@ -501,6 +501,23 @@ def office_html(raw, mode=None, page_size="USLetter"):
     return "".join(parts)
 
 
+def clean_env():
+    """Environment for external programs without our bundled libraries.
+
+    PyInstaller and the AppImage prepend their own library folders to
+    LD_LIBRARY_PATH; LibreOffice must use the system libraries instead.
+    """
+    env = dict(os.environ)
+    for var in ("LD_LIBRARY_PATH", "GTK_PATH", "GTK_DATA_PREFIX", "GTK2_RC_FILES"):
+        orig = env.pop(var + "_ORIG", None)
+        if orig is not None:
+            env[var] = orig
+        elif var != "LD_LIBRARY_PATH" or getattr(__import__("sys"), "frozen", False) \
+                or os.environ.get("APPIMAGE"):
+            env.pop(var, None)
+    return env
+
+
 def find_soffice():
     """Locate LibreOffice on Linux, Windows or macOS."""
     for name in ("soffice", "libreoffice"):
@@ -531,7 +548,7 @@ def to_office(raw, fmt, mode=None, page_size="USLetter"):
         subprocess.run([soffice, "-env:UserInstallation=" + profile, "--headless",
                         "--infilter=HTML (StarWriter)", "--convert-to", filt,
                         "--outdir", tmp, src],
-                       check=True, timeout=180,
+                       check=True, timeout=180, env=clean_env(),
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         with open(os.path.join(tmp, "script." + fmt), "rb") as f:
             return f.read()
