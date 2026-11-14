@@ -36,6 +36,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/bash")
         process.arguments = [script] + files
+        // Screen scale (2 on Retina) so the script can pick the Windows DPI
+        var environment = ProcessInfo.processInfo.environment
+        let scale = NSScreen.main?.backingScaleFactor ?? 1
+        environment["OPENSCRIPT_SCALE"] = String(Int(scale.rounded()))
+        process.environment = environment
         if quitWhenDone {
             process.terminationHandler = { _ in
                 DispatchQueue.main.async { NSApp.terminate(nil) }
