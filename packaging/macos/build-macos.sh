@@ -30,11 +30,17 @@ mkdir -p "$C/MacOS" "$C/Resources"
 echo "==> Wine: verify and unpack"
 (cd "$(dirname "$WINE_TARBALL")" && grep " $(basename "$WINE_TARBALL")\$" "$ROOT/packaging/tools.sha256" | shasum -a 256 -c -)
 tar -C "$WORK" -xf "$WINE_TARBALL"
-WINE_BUNDLE=$(dirname "$(dirname "$(dirname "$(find "$WORK" -path '*/Contents/Resources/wine/bin/wine' -print -quit)")")")
-[ -x "$WINE_BUNDLE/Resources/wine/bin/wine" ] || { echo "wine binary not found in tarball"; exit 1; }
-# Same relative layout as the original Wine.app (lib -> ../../Frameworks)
-cp -R "$WINE_BUNDLE/Resources/wine" "$C/Resources/wine"
-[ -d "$WINE_BUNDLE/Frameworks" ] && cp -R "$WINE_BUNDLE/Frameworks" "$C/Frameworks"
+WINE_BIN=$(find "$WORK" \( -type f -o -type l \) -path '*/bin/wine' -print -quit)
+if [ -z "$WINE_BIN" ]; then
+  echo "wine binary not found in tarball; layout:"
+  find "$WORK" -maxdepth 5 -type d | sed "s|$WORK/||" | head -40
+  exit 1
+fi
+WINE_ROOT=$(dirname "$(dirname "$WINE_BIN")")          # .../wine (bin, lib, share)
+echo "wine root: ${WINE_ROOT#$WORK/}"
+# Keep the original relative layout: wine/lib may refer to ../../Frameworks
+cp -R "$WINE_ROOT" "$C/Resources/wine"
+[ -d "$WINE_ROOT/../../Frameworks" ] && cp -R "$WINE_ROOT/../../Frameworks" "$C/Frameworks"
 # Not needed by the engine (.NET and Internet Explorer runtimes are disabled)
 rm -rf "$C/Resources/wine/share/wine/mono" "$C/Resources/wine/share/wine/gecko"
 du -sh "$C/Resources/wine" "$C/Frameworks" 2>/dev/null || true
