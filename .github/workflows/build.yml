@@ -71,6 +71,15 @@ jobs:
         run: |
           packaging/appimage/build-appimage.sh "upstream/$LINUX_TAR" "upstream/$WIN_PAF" \
             dist "${GITHUB_REF_NAME//\//-}"
+      - name: Test the bundled server on other distributions
+        run: |
+          cd dist && ./*.AppImage --appimage-extract >/dev/null
+          for img in fedora:latest opensuse/tumbleweed:latest ubuntu:24.04 debian:12; do
+            echo "== $img"
+            docker run --rm -v "$PWD/squashfs-root:/app:ro" "$img" sh -c \
+              '/app/usr/lib/openscript/server/openscript-server --selftest; tail -3 /tmp/openscript-server.log; grep -q "SELFTEST OK" /tmp/openscript-server.log'
+          done
+          rm -rf squashfs-root
       - uses: actions/upload-artifact@v4
         with:
           name: OpenScript-appimage

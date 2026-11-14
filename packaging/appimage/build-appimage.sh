@@ -54,8 +54,20 @@ cp -r /usr/share/themes/Adwaita/gtk-2.0 "$AD/usr/share/themes/Adwaita/"
 cp /usr/share/themes/Adwaita/index.theme "$AD/usr/share/themes/Adwaita/" 2>/dev/null || true
 
 echo "==> Frozen PDF/export server"
+# Bundle the whole Pango text stack: PyInstaller already ships GLib from the
+# build system, and a newer system Pango would not work with that older GLib.
+PANGO_LIBS=()
+for lib in libpango-1.0.so.0 libpangoft2-1.0.so.0 libharfbuzz.so.0 \
+           libharfbuzz-subset.so.0 libfontconfig.so.1 libfreetype.so.6 \
+           libfribidi.so.0 libthai.so.0 libdatrie.so.1 libgraphite2.so.3 libpng16.so.16; do
+  if [ -e "$LIBDIR/$lib" ]; then
+    # copied under its SONAME, the name WeasyPrint dlopen()s
+    PANGO_LIBS+=(--add-binary "$LIBDIR/$lib:.")
+  fi
+done
 python3 -m PyInstaller "$ROOT/server/launcher.py" --name openscript-server --onedir \
   --paths "$ROOT/server" --hidden-import server --hidden-import exporters \
+  "${PANGO_LIBS[@]}" --exclude-module apt_pkg --exclude-module dbus --exclude-module gi \
   --distpath "$WORK/pyi" --workpath "$WORK/pyi-build" --specpath "$WORK" --noconfirm --log-level WARN
 mv "$WORK/pyi/openscript-server" "$APP/server"
 rm -f "${TMPDIR:-/tmp}/openscript-server.log"
