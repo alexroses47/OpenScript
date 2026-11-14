@@ -150,10 +150,33 @@ jobs:
         run: |
           $ver = "$env:GITHUB_REF_NAME".Replace("/", "-")
           Compress-Archive -Path dist/OpenScript -DestinationPath "dist/OpenScript-$ver-windows.zip"
+      - name: Build installer (Inno Setup)
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup --no-progress -y }
+          $ver = "$env:GITHUB_REF_NAME".Replace("/", "-")
+          & $iscc "/DAppVersion=$ver" "/DSourceDir=$PWD\dist\OpenScript" "/DOutputDir=$PWD\dist" `
+            packaging\windows\openscript.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed ($LASTEXITCODE)" }
+      - name: Test the installer (silent install, selftest, uninstall)
+        run: |
+          $setup = Get-ChildItem dist/*-windows-setup.exe | Select-Object -First 1
+          $dir = "$env:RUNNER_TEMP\OpenScriptTest"
+          $p = Start-Process $setup.FullName -ArgumentList "/VERYSILENT", "/CURRENTUSER", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=$dir", "/TASKS=associate" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "setup failed ($($p.ExitCode))" }
+          $p = Start-Process "$dir\OpenScript.exe" -ArgumentList "--selftest" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "installed selftest failed ($($p.ExitCode))" }
+          if (-not (Test-Path "HKCU:\Software\Classes\.celtx")) { throw ".celtx association missing" }
+          $p = Start-Process "$dir\unins000.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" -Wait -PassThru
+          Start-Sleep -Seconds 5
+          if (Test-Path "$dir\OpenScript.exe") { throw "uninstall left files behind" }
+          Write-Output "installer OK"
       - uses: actions/upload-artifact@v4
         with:
           name: OpenScript-windows
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/*-windows-setup.exe
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -172,4 +195,4 @@ jobs:
           gh release create "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" \
             --title "OpenScript $GITHUB_REF_NAME" --generate-notes \
             out/OpenScript-appimage/*.AppImage out/OpenScript-linux/*.tar.gz \
-            out/OpenScript-windows/*.zip
+            out/OpenScript-windows/*-windows-setup.exe out/OpenScript-windows/*.zip
