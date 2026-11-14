@@ -1,0 +1,56 @@
+--- a/nsCeltxService.js
++++ b/nsCeltxService.js
+@@ -44,8 +44,10 @@
+     .getService(Ci.nsIObserverService);
+   os.addObserver(this, "quit-application", false);
+ 
+-  this.startup();
+-  this.fetchBannerData();
++  // OpenScript: the celtx.com startup ping and ad banners are gone (their
++  // servers now fail with TLS errors), so they are no longer requested.
++  // this.startup();
++  // this.fetchBannerData();
+ }
+ 
+ nsCeltxService.prototype = {
+@@ -76,10 +78,10 @@
+     return "http://" + this.PUBLISH_SERVER + "/pub/startup";
+   },
+   get SPLASH_URL () {
+-    return "http://" + this.PUBLISH_SERVER + "/pub/splash";
++    return "about:blank"; // OpenScript: was http://PUBLISH_SERVER/pub/splash (gone)
+   },
+   get POW_URL () {
+-    return "http://" + this.PUBLISH_SERVER + "/pub/potw";
++    return "about:blank"; // OpenScript: was http://PUBLISH_SERVER/pub/potw (gone)
+   },
+   get BANNER_URL () {
+     return "http://" + this.PUBLISH_SERVER + "/pub/banners";
+@@ -104,11 +106,25 @@
+       .getService(Ci.nsIPrefService);
+     return ps.getBranch("celtx.server.").getCharPref("render.selection");
+   },
++  // OpenScript: local render server (render.celtx.com is gone). The launcher
++  // shares a per-user secret through OPENSCRIPT_TOKEN; requests without it
++  // are rejected by the server.
++  get OPENSCRIPT_TOKEN () {
++    try {
++      return Cc["@mozilla.org/process/environment;1"]
++        .getService(Ci.nsIEnvironment).get("OPENSCRIPT_TOKEN");
++    }
++    catch (ex) {
++      return "";
++    }
++  },
+   get PDF_CONVERT_URL () {
+-    return "https://" + this.PDF_SERVER + "/as/pdf";
++    return "http://127.0.0.1:47890/as/pdf?token="
++      + encodeURIComponent(this.OPENSCRIPT_TOKEN);
+   },
+   get PDF_PREVIEW_URL () {
+-    return "https://" + this.PDF_SERVER + "/as/html";
++    return "http://127.0.0.1:47890/as/html?token="
++      + encodeURIComponent(this.OPENSCRIPT_TOKEN);
+   },
+ 
+ 

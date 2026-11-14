@@ -31,7 +31,7 @@ PY_VERSIONS = ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
 
 def run(cmd, **kw):
-    print("+", " ".join(cmd), flush=True)
+    print("+", " ".join(cmd), flush=True)  # noqa: T201
     subprocess.run(cmd, check=True, **kw)
 
 
@@ -86,6 +86,41 @@ def set_default_locale(app, locale="en-US"):
                'pref("general.useragent.locale", "%s");' % locale, s)
     with open(pref, "w", encoding="utf-8", errors="surrogateescape", newline="") as f:
         f.write(s)
+
+
+# ---------------------------------------------------------------------------
+# Code changes kept as patches against the original Celtx 2.9.7 files
+# ---------------------------------------------------------------------------
+PATCHES = os.path.join(ROOT, "patches")
+
+
+def apply_patch(text, name):
+    """Apply patches/<name>.patch to the original file content (LF endings)."""
+    with tempfile.TemporaryDirectory() as tmp:
+        target = os.path.join(tmp, name)
+        with open(target, "w", encoding="utf-8", errors="surrogateescape", newline="\n") as f:
+            f.write(text.replace("\r\n", "\n"))
+        run(["git", "apply", "-p1", "--whitespace=nowarn",
+             os.path.join(PATCHES, name + ".patch")], cwd=tmp)
+        with open(target, encoding="utf-8", errors="surrogateescape") as f:
+            return f.read()
+
+
+def apply_code_patches(app):
+    """Patched engine files: dead services off, local server, export menu."""
+    service = os.path.join(app, "components", "nsCeltxService.js")
+    with open(service, encoding="utf-8", errors="surrogateescape") as f:
+        patched = apply_patch(f.read(), "nsCeltxService.js")
+    with open(service, "w", encoding="utf-8", errors="surrogateescape", newline="") as f:
+        f.write(patched)
+
+    with zipfile.ZipFile(os.path.join(app, "chrome", "celtx.jar")) as z:
+        editor = z.read("content/celtx/editors/scripteditor.js").decode(
+            "utf-8", errors="surrogateescape")
+    dest = os.path.join(app, "chrome", "celtx-export", "scripteditor.js")
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    with open(dest, "w", encoding="utf-8", errors="surrogateescape", newline="") as f:
+        f.write(apply_patch(editor, "scripteditor.js"))
 
 
 # ---------------------------------------------------------------------------
@@ -225,6 +260,7 @@ def build_linux(args, work):
 
     copytree(os.path.join(ROOT, "overlay", "common"), app)
     copytree(os.path.join(ROOT, "overlay", "linux"), app)
+    apply_code_patches(app)
 
     # Spanish UI + dictionary (locale files are platform independent)
     for name in ("es-ES.jar", "es-ES.manifest", "calendar-es-ES.jar",
@@ -295,6 +331,7 @@ def build_windows(args, work):
     app = os.path.join(pkg, "app")
     shutil.copytree(win_app, app)
     copytree(os.path.join(ROOT, "overlay", "common"), app)
+    apply_code_patches(app)
     set_default_locale(app)
     rebrand(app, args.version)
 
