@@ -8,7 +8,7 @@
 
 **A simple, professional, open-source program for writing screenplays, comics, stage plays,
 radio plays and more.** A revival of the legendary Celtx 2.9.7, brought back to life for today's
-computers by Ismael A. Rodríguez.
+computers.
 
 > OpenScript is an independent project based on the open-source code of Celtx 2.9.7
 > (Mozilla Public License 2.0). **It is not affiliated with, sponsored or endorsed by Celtx Inc.**
@@ -196,7 +196,6 @@ over the project's direction. Every release remains free and public for everyone
 
 ## Credits
 
-- **OpenScript revival:** Ismael A. Rodríguez.
 - **Original program:** Celtx 2.9.7, by the Celtx team (Greyfirst Corp.), released as open
   source under the MPL 2.0. The original credits are kept in the app's *About* window.
 

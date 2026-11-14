@@ -8,7 +8,7 @@
 
 **Un programa simple y profesional, de código abierto, para escribir guiones de cine, cómics,
 teatro, radio y más.** Una nueva vida para el legendario Celtx 2.9.7, revivido para los equipos
-actuales por Ismael A. Rodríguez.
+actuales.
 
 > OpenScript es un proyecto independiente basado en el código abierto de Celtx 2.9.7
 > (Mozilla Public License 2.0). **No está afiliado, patrocinado ni respaldado por Celtx Inc.**
@@ -200,7 +200,6 @@ públicas para todo el mundo.
 
 ## Créditos
 
-- **Revivificación de OpenScript:** Ismael A. Rodríguez.
 - **Programa original:** Celtx 2.9.7, del equipo de Celtx (Greyfirst Corp.), publicado como código
   abierto bajo la MPL 2.0. Los créditos originales se conservan en la ventana *Acerca de* de la app.
 
