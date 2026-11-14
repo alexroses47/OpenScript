@@ -197,14 +197,14 @@ def comic_labels():
             "caption": lb["caption_title"]}
 
 COMIC_CSS = """
-@page { size: %(size)s; margin: 0.82in 0.47in 0.55in 0.5in; }
+@page { size: %(size)s; margin: %(mt).2fin %(mr).2fin %(mb).2fin %(ml).2fin; }
 html { font: 12pt/1.0 "Liberation Mono", "Courier New", Courier, monospace; }
 body { margin: 0; }
 .titlepage .tp-title { text-align: center; padding-top: 2.95in; margin: 0; }
 .titlepage .tp-center { text-align: center; margin: 12pt 0 0 0; }
 .sheet { break-before: page; }
 .sheet:first-child { break-before: auto; }
-.pagelabel { margin: 0 0 0 0.1in; height: 0.6in; }
+.pagelabel { margin: 0 0 0 0.1in; height: %(label_h).2fin; }
 table { width: 100%%; border-collapse: collapse; table-layout: fixed; }
 th { font-weight: normal; text-align: center; border: 0.6pt solid #000;
      padding: 0.5pt 0 1.5pt 0; height: 12pt; }
@@ -217,9 +217,12 @@ col.c-dialog { width: 46.6%%; }
 .dialog .block + .block { margin-top: 12pt; }
 """
 
-# Printable height (page height minus top/bottom margins), used so each comic
-# page's table stretches to the bottom of the sheet like the original.
+# Page geometry shared by the comic CSS and the sheet layout (inches),
+# measured from a PDF produced by the original render.celtx.com service.
 PAGE_HEIGHTS_IN = {"A4": 11.69, "letter": 11.0}
+COMIC_MARGIN_TOP, COMIC_MARGIN_RIGHT = 0.82, 0.47
+COMIC_MARGIN_BOTTOM, COMIC_MARGIN_LEFT = 0.55, 0.50
+COMIC_LABEL_H = 0.6   # the "Page N" line above the table
 
 
 def inner_html(tag):
@@ -273,52 +276,50 @@ def layout_comic_sheets(pages, size):
     where fill_in is the height the last row is stretched to.
     """
     line = 12 / 72.0
-    pad = 0.17 + 0.2 + 0.6 / 72
-    width = PAGE_WIDTHS_IN.get(size, 8.5) - 0.97
-    cols = int((width * 0.438 - 0.2) / 0.1) - 1
-    cold = int((width * 0.466 - 0.2) / 0.1) - 1
-    content_h = PAGE_HEIGHTS_IN.get(size, 11.0) - 0.82 - 0.55
-    header_h = 14 / 72.0 + 1.2 / 72
+    pad = 0.17 + 0.2 + 0.6 / 72          # cell padding + rule
+    width = PAGE_WIDTHS_IN.get(size, 8.5) - COMIC_MARGIN_LEFT - COMIC_MARGIN_RIGHT
+    desc_chars = int((width * 0.438 - 0.2) / 0.1) - 1
+    dialog_chars = int((width * 0.466 - 0.2) / 0.1) - 1
+    content_h = PAGE_HEIGHTS_IN.get(size, 11.0) - COMIC_MARGIN_TOP - COMIC_MARGIN_BOTTOM
+    header_h = 14 / 72.0 + 1.2 / 72      # table header row
     safety = 0.12
+
+    def row_height(panel):
+        desc = sum(_plain_lines(d, desc_chars) for d in panel["desc"])
+        dialog = sum(sum(_plain_lines(x, dialog_chars) for x in blk)
+                     for blk in panel["dialog"])
+        dialog += max(0, len(panel["dialog"]) - 1)   # blank line between blocks
+        return max(desc, dialog, 1) * line + pad
 
     sheets = []
     for n, panels in enumerate(pages, 1):
-        avail = content_h - 0.6 - header_h - safety   # first sheet has "Pág. N"
+        # the first sheet of a comic page also carries the "Page N" label
+        avail = content_h - COMIC_LABEL_H - header_h - safety
         rows, used, first = [], 0.0, True
         for m, panel in enumerate(panels, 1):
-            dl = sum(_plain_lines(d, cols) for d in panel["desc"])
-            gl = sum(sum(_plain_lines(x, cold) for x in blk) for blk in panel["dialog"])
-            gl += max(0, len(panel["dialog"]) - 1)
-            h = max(dl, gl, 1) * line + pad
+            h = row_height(panel)
             if rows and used + h > avail:
-                sheets.append([n, first, rows, avail - used])
+                sheets.append((n, first, rows, avail - used))
                 rows, used, first = [], 0.0, False
                 avail = content_h - header_h - safety
-            rows.append((m, panel))
+            rows.append((m, panel, h))
             used += h
-        sheets.append([n, first, rows, avail - used])
+        sheets.append((n, first, rows, avail - used))
+
     out = []
     for n, first, rows, slack in sheets:
-        if rows:
-            # last row height = its own height + the slack left on the sheet
-            last = rows[-1][1]
-            dl = sum(_plain_lines(d, cols) for d in last["desc"])
-            gl = sum(sum(_plain_lines(x, cold) for x in blk) for blk in last["dialog"])
-            gl += max(0, len(last["dialog"]) - 1)
-            own = max(dl, gl, 1) * line + pad
-            fill = own + slack
-        else:
-            fill = slack
-        out.append((n, first, rows, max(fill, 0)))
+        # the last row is stretched by the slack left on the sheet
+        fill = (rows[-1][2] if rows else 0.0) + slack
+        out.append((n, first, [(m, panel) for m, panel, _h in rows], max(fill, 0)))
     return out
 
 
 def build_comic(soup, body, title, size):
     css = COMIC_CSS % {
         "size": size,
-        # printable height minus the "Pág. N" line; a taller table (very
-        # long comic page) simply continues on the next sheet.
-        "table_h": PAGE_HEIGHTS_IN.get(size, 11.0) - 0.82 - 0.55 - 0.6 - 0.05,
+        "mt": COMIC_MARGIN_TOP, "mr": COMIC_MARGIN_RIGHT,
+        "mb": COMIC_MARGIN_BOTTOM, "ml": COMIC_MARGIN_LEFT,
+        "label_h": COMIC_LABEL_H,
     }
     L = comic_labels()
 
