@@ -113,7 +113,7 @@ jobs:
             $hash, $name = $_ -split '\s+', 2
             $actual = (Get-FileHash -Algorithm SHA256 "upstream/$name").Hash
             if ($actual -ne $hash.ToUpper()) { throw "checksum mismatch: $name" }
-            Write-Output "$name: OK"
+            Write-Output "${name}: OK"
           }
       - name: Install Pango (MSYS2) for WeasyPrint
         run: |
