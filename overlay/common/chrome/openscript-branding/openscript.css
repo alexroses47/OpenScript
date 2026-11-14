@@ -1,0 +1,19 @@
+/* OpenScript: branding and removal of Celtx online services that no longer
+   exist (Celtx Studio sign-in, open/save to the Celtx server, ad banner). */
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* Welcome window header */
+#banner {
+  background-image: url(chrome://openscriptbrand/content/splashHeader.png) !important;
+}
+
+/* Dead online services */
+#celtx-studio-button,
+#networkmenu,
+#bannerframe,
+#notifierlabel,
+menuitem[command="cmd-open-studio"],
+menuitem[oncommand^="cmdSaveProjectToServer"],
+button[oncommand="template_download()"] {
+  display: none !important;
+}

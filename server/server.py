@@ -430,7 +430,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
-        self._send(200, "text/plain", b"celtx local pdf server ok\n")
+        self._send(200, "text/plain", b"openscript server ok\n")
 
     def do_POST(self):
         length = int(self.headers.get("Content-Length", 0))

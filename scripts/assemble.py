@@ -89,6 +89,110 @@ def set_default_locale(app, locale="en-US"):
 
 
 # ---------------------------------------------------------------------------
+# Rebranding of user-visible strings (Celtx -> OpenScript)
+# ---------------------------------------------------------------------------
+PROJECT_URL = "https://github.com/alexroses47/OpenScript"
+
+# Keys whose value names the .celtx file format: kept as is.
+KEEP_KEYS = {"Celtx095Project", "Celtx097Project", "CeltxProject", "CeltxTemplate"}
+
+SPECIAL = {
+    "en": {
+        "celtxTagline.label": "Write your story: film, theatre, radio and comics.",
+        "pdfWarningText": "OpenScript formats your script on your own computer to an "
+                          "industry standard Screenplay, Stageplay, Audio Play or Dual "
+                          "Column (AV). Nothing is sent over the internet.",
+        "CeltxVersion": "OpenScript {version} · Celtx engine",
+    },
+    "es": {
+        "celtxTagline.label": "Escribe tu historia: cine, teatro, radio y cómic.",
+        "pdfWarningText": "OpenScript da formato a tu guion en tu propio equipo, según el "
+                          "estándar de la industria: guion de cine, teatro, radio o doble "
+                          "columna (AV). No se envía nada por internet.",
+        "CeltxVersion": "OpenScript {version} · motor Celtx",
+    },
+}
+SPECIAL["en"]["pdfErrorText2"] = SPECIAL["en"]["pdfWarningText"]
+SPECIAL["es"]["pdfErrorText2"] = SPECIAL["es"]["pdfWarningText"]
+
+DTD_RE = re.compile(r'(<!ENTITY\s+([\w.\-]+)\s+)(["\'])(.*?)\3', re.S)
+
+
+def _rebrand_value(key, value, lang, version):
+    special = SPECIAL.get(lang, {})
+    if key in special:
+        return special[key].format(version=version)
+    if key in KEEP_KEYS:
+        return value
+    return value.replace("Celtx", "OpenScript")
+
+
+def rebrand_text(name, text, lang, version):
+    if name.endswith(".dtd"):
+        def sub(m):
+            value = _rebrand_value(m.group(2), m.group(4), lang, version)
+            return m.group(1) + m.group(3) + value + m.group(3)
+        return DTD_RE.sub(sub, text)
+    out = []
+    for line in text.splitlines(True):
+        stripped = line.lstrip()
+        if "=" in line and not stripped.startswith(("#", "!")):
+            key, value = line.split("=", 1)
+            end = "\n" if value.endswith("\n") else ""
+            value = _rebrand_value(key.strip(), value.rstrip("\r\n"), lang, version)
+            line = key + "=" + value + ("\r\n" if line.endswith("\r\n") else end)
+        out.append(line)
+    return "".join(out)
+
+
+def rebrand_jar(jar, version):
+    """Rewrite locale/<lang>/celtx/*.dtd|*.properties inside a jar in place."""
+    tmp = jar + ".tmp"
+    with zipfile.ZipFile(jar) as src, zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as dst:
+        for item in src.infolist():
+            data = src.read(item)
+            parts = item.filename.split("/")
+            if (len(parts) == 4 and parts[0] == "locale" and parts[2] == "celtx"
+                    and parts[3].endswith((".dtd", ".properties"))):
+                lang = parts[1].split("-")[0]
+                text = data.decode("utf-8", errors="surrogateescape")
+                data = rebrand_text(parts[3], text, lang, version).encode(
+                    "utf-8", errors="surrogateescape")
+            dst.writestr(item, data)
+    os.replace(tmp, jar)
+
+
+def write_branded_util(app):
+    """Help menu links (support, bugs, guide) point to the OpenScript project."""
+    with zipfile.ZipFile(os.path.join(app, "chrome", "celtx.jar")) as z:
+        js = z.read("content/celtx/util.js").decode("utf-8", errors="surrogateescape")
+    links = {
+        "BUG_REPORT_URL": PROJECT_URL + "/issues",
+        "SUPPORT_URL": PROJECT_URL + "#readme",
+        "WALKTHRU_URL": PROJECT_URL + "#readme",
+        "USER_GUIDE_URL": PROJECT_URL + "#readme",
+        "FORUMS_URL": PROJECT_URL + "/issues",
+        "PROJ_CENTRAL_URL": PROJECT_URL,
+    }
+    for key, url in links.items():
+        js, n = re.subn(r"(get %s\s*\(\)\s*\{\s*return )'[^']*'" % key,
+                        r"\1'%s'" % url, js)
+        assert n == 1, key
+    dest = os.path.join(app, "chrome", "openscript-branding", "util.js")
+    with open(dest, "w", encoding="utf-8", errors="surrogateescape", newline="") as f:
+        f.write("// OpenScript: Celtx util.js with help links to the OpenScript project.\n" + js)
+
+
+def rebrand(app, version):
+    version = version.lstrip("v")
+    for jar in ("celtx.jar", "celtx-es-ES.jar"):
+        path = os.path.join(app, "chrome", jar)
+        if os.path.exists(path):
+            rebrand_jar(path, version)
+    write_branded_util(app)
+
+
+# ---------------------------------------------------------------------------
 def build_linux(args, work):
     win_app = extract_paf(args.win_paf, os.path.join(work, "paf"))
     with tarfile.open(args.linux_tar) as t:
@@ -109,6 +213,7 @@ def build_linux(args, work):
         shutil.copy2(os.path.join(win_app, "dictionaries", name),
                      os.path.join(app, "dictionaries"))
     replace_icons(app)
+    rebrand(app, args.version)
 
     # Light-theme shim (needs gcc; prebuilt .so is also shipped)
     run(["gcc", "-shared", "-fPIC", "-O2", "-o",
@@ -167,6 +272,7 @@ def build_windows(args, work):
     shutil.copytree(win_app, app)
     copytree(os.path.join(ROOT, "overlay", "common"), app)
     set_default_locale(app)
+    rebrand(app, args.version)
 
     # English locale (the Spanish portable build ships only Spanish)
     with tarfile.open(args.linux_tar) as t:

@@ -3,3 +3,9 @@ override chrome://branding/locale/brand.dtd chrome://openscriptbrand/content/bra
 override chrome://branding/locale/brand.properties chrome://openscriptbrand/content/brand.properties
 override chrome://global/locale/brand.dtd chrome://openscriptbrand/content/brand.dtd
 override chrome://global/locale/brand.properties chrome://openscriptbrand/content/brand.properties
+# About dialog logo, help links pointing to the OpenScript project
+override chrome://celtx/skin/celtx.png chrome://openscriptbrand/content/about-logo.png
+override chrome://celtx/content/util.js chrome://openscriptbrand/content/util.js
+# Branding styles and removal of dead Celtx online services
+style chrome://celtx/content/celtx.xul chrome://openscriptbrand/content/openscript.css
+style chrome://celtx/content/templates.xul chrome://openscriptbrand/content/openscript.css
