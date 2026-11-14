@@ -13,6 +13,16 @@ Una reimplementación del legendario Celtx 2.9.7, actualizada para que funcione 
 > (Mozilla Public License 2.0). **No está afiliado, patrocinado ni respaldado por Celtx Inc.**
 > «Celtx» es una marca registrada de su respectivo propietario. Consulta [NOTICE.md](NOTICE.md).
 
+## Capturas
+
+| Guion de cine | Vista previa (PDF) |
+|---|---|
+| ![Editor de guion](docs/screenshots/film-editor.png) | ![Vista previa del guion](docs/screenshots/film-pdf.png) |
+| **Guion de cómic** | **PDF de cómic: Panel / Descripción / Diálogo** |
+| ![Editor de cómic](docs/screenshots/comic-editor.png) | ![Vista previa del cómic](docs/screenshots/comic-pdf-es.png) |
+| **Pantalla de bienvenida** | **Interfaz en inglés** (según el idioma del sistema) |
+| ![Pantalla de bienvenida](docs/screenshots/welcome.png) | ![Interfaz en inglés](docs/screenshots/comic-pdf.png) |
+
 ## Por qué existe OpenScript
 
 Celtx 2.9.7 era sencillo y útil: abrías el programa y escribías tu guion de cine, tu obra de teatro
@@ -103,7 +113,7 @@ de Celtx 2.9.7 (Linux y Windows) y les aplica los cambios de este repositorio:
 
 | Carpeta | Contenido |
 |---|---|
-| `overlay/common/` | Cambios para todas las plataformas:<br>• servicios sin conexiones caducadas<br>• menú Exportar ampliado<br>• marca OpenScript |
+| `overlay/common/` | Cambios para todas las plataformas:<br>• servicios sin conexiones caducadas<br>• menú Exportar ampliado<br>• marca OpenScript (textos, bienvenida, «Acerca de»)<br>• enlaces de ayuda a este proyecto<br>• servicios en línea de Celtx retirados ocultos<br>• idioma de la interfaz según el sistema |
 | `overlay/linux/` | Lanzador, ajuste de tema GTK y estilos de legibilidad. |
 | `server/` | Servidor local (Python) de PDF, vista previa y exportación (Fountain, FDX, ODT, DOCX), más el lanzador de Windows. |
 | `scripts/assemble.py` | Arma los paquetes a partir de los binarios originales. |

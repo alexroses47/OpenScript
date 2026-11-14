@@ -13,6 +13,16 @@ A re-implementation of the legendary Celtx 2.9.7, brought back to life for today
 > (Mozilla Public License 2.0). **It is not affiliated with, sponsored or endorsed by Celtx Inc.**
 > "Celtx" is a registered trademark of its respective owner. See [NOTICE.md](NOTICE.md).
 
+## Screenshots
+
+| Screenplay | Print preview (PDF) |
+|---|---|
+| ![Screenplay editor](docs/screenshots/film-editor.png) | ![Screenplay PDF preview](docs/screenshots/film-pdf.png) |
+| **Comic script** | **Comic PDF: Panel / Description / Dialogue** |
+| ![Comic editor](docs/screenshots/comic-editor.png) | ![Comic PDF preview](docs/screenshots/comic-pdf.png) |
+| **Welcome screen** | **Spanish interface** (follows your system language) |
+| ![Welcome screen](docs/screenshots/welcome.png) | ![Spanish interface](docs/screenshots/comic-pdf-es.png) |
+
 ## Why OpenScript exists
 
 Celtx 2.9.7 was simple and useful. You opened it and wrote your screenplay, stage play or comic in
@@ -100,7 +110,7 @@ builds (Linux and Windows) and applies the changes in this repository:
 
 | Folder | Contents |
 |---|---|
-| `overlay/common/` | Changes for all platforms:<br>• no calls to dead services<br>• extended Export menu<br>• OpenScript branding<br>• interface language follows the system |
+| `overlay/common/` | Changes for all platforms:<br>• no calls to dead services<br>• extended Export menu<br>• OpenScript branding (texts, welcome screen, About)<br>• help links to this project<br>• dead Celtx online services hidden<br>• interface language follows the system |
 | `overlay/linux/` | Launcher, GTK theme fix and readability styles. |
 | `server/` | Local server (Python) for PDF, preview and export (Fountain, FDX, ODT, DOCX), plus the Windows launcher. |
 | `scripts/assemble.py` | Builds the packages from the original binaries. |

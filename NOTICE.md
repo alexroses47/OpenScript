@@ -6,8 +6,10 @@ OpenScript is an independent project. **It is not affiliated with, sponsored or 
 Celtx Inc.** "Celtx" is a registered trademark of its owner and is mentioned here only to
 describe where the code comes from. OpenScript does not use the Celtx logo as its own identity.
 
-Some internal images and texts of the original engine (for example the "Welcome to Celtx"
-start screen) may still show Celtx 2.9.7 elements; they are being replaced.
+The user interface uses OpenScript's own name and logo. "Celtx" is still mentioned where it
+describes facts: the `.celtx` project file format, the engine version in the About dialog, and
+the original Celtx credits, kept as attribution. The bundled sample projects were created by
+the Celtx team.
 
 ## Components
 
