@@ -1,0 +1,5 @@
+# Patches must keep LF line endings on every platform (Windows checkouts too)
+*.patch text eol=lf
+*.sh text eol=lf
+overlay/linux/celtx text eol=lf
+packaging/appimage/AppRun text eol=lf

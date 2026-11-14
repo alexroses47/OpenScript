@@ -100,8 +100,13 @@ def apply_patch(text, name):
         target = os.path.join(tmp, name)
         with open(target, "w", encoding="utf-8", errors="surrogateescape", newline="\n") as f:
             f.write(text.replace("\r\n", "\n"))
-        run(["git", "apply", "-p1", "--whitespace=nowarn",
-             os.path.join(PATCHES, name + ".patch")], cwd=tmp)
+        # normalise the patch too (a Windows checkout may have turned it CRLF)
+        with open(os.path.join(PATCHES, name + ".patch"), "rb") as f:
+            patch = f.read().replace(b"\r\n", b"\n")
+        patch_file = os.path.join(tmp, name + ".patch")
+        with open(patch_file, "wb") as f:
+            f.write(patch)
+        run(["git", "apply", "-p1", "--whitespace=nowarn", patch_file], cwd=tmp)
         with open(target, encoding="utf-8", errors="surrogateescape") as f:
             return f.read()
 
