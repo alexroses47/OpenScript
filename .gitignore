@@ -1,0 +1,12 @@
+# Build output and upstream binaries (published as release assets, not in git)
+dist/
+build/
+upstream/
+*.tar.bz2
+*.paf.exe
+__pycache__/
+*.pyc
+*.spec
+venv/
+# Never commit scripts/projects of users
+*.celtx
