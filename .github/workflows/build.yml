@@ -47,6 +47,35 @@ jobs:
           name: OpenScript-linux
           path: dist/*.tar.gz
 
+  appimage:
+    # Ubuntu 22.04 base: the AppImage runs on distributions with glibc >= 2.35
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch original Celtx 2.9.7 binaries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$UPSTREAM_TAG" -R "$GITHUB_REPOSITORY" -D upstream
+          (cd upstream && sha256sum -c ../packaging/upstream.sha256)
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            curl xz-utils p7zip-full file gcc make libc6-dev \
+            python3 python3-pip python3-venv \
+            libgtk2.0-0 gnome-themes-extra libxt6 \
+            libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz0b fonts-liberation
+          python3 -m pip install -r server/requirements.txt pyinstaller
+      - name: Build AppImage
+        run: |
+          packaging/appimage/build-appimage.sh "upstream/$LINUX_TAR" "upstream/$WIN_PAF" \
+            dist "${GITHUB_REF_NAME//\//-}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenScript-appimage
+          path: dist/*.AppImage
+
   windows:
     runs-on: windows-2022
     defaults:
@@ -101,7 +130,7 @@ jobs:
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [linux, windows]
+    needs: [linux, appimage, windows]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/download-artifact@v4
@@ -113,4 +142,5 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" \
             --title "OpenScript $GITHUB_REF_NAME" --generate-notes \
-            out/OpenScript-linux/*.tar.gz out/OpenScript-windows/*.zip
+            out/OpenScript-appimage/*.AppImage out/OpenScript-linux/*.tar.gz \
+            out/OpenScript-windows/*.zip

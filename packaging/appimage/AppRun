@@ -1,0 +1,43 @@
+#!/bin/sh
+# OpenScript AppImage entry point.
+#
+#   ./OpenScript-x86_64.AppImage [archivo.celtx]   open OpenScript
+#   ./OpenScript-x86_64.AppImage --instalar        add to the applications menu
+#   ./OpenScript-x86_64.AppImage --desinstalar     remove it from the menu
+HERE="$(dirname "$(readlink -f "$0")")"
+APP="$HERE/usr/lib/openscript"
+SELF="${APPIMAGE:-$HERE/AppRun}"
+
+APPS="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+ICONS="${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor/256x256/apps"
+MIME="${XDG_DATA_HOME:-$HOME/.local/share}/mime"
+
+case "$1" in
+  --instalar|--install)
+    mkdir -p "$APPS" "$ICONS" "$MIME/packages"
+    cp "$HERE/openscript.png" "$ICONS/openscript.png"
+    sed "s|^Exec=.*|Exec=\"$SELF\" %f|" "$HERE/openscript.desktop" > "$APPS/openscript.desktop"
+    chmod +x "$APPS/openscript.desktop"
+    cp "$HERE/usr/share/mime/packages/openscript.xml" "$MIME/packages/openscript.xml"
+    update-mime-database "$MIME" >/dev/null 2>&1 || true
+    update-desktop-database "$APPS" >/dev/null 2>&1 || true
+    echo "OpenScript añadido al menú de aplicaciones."
+    echo "Si mueves este archivo .AppImage, vuelve a ejecutar --instalar."
+    exit 0 ;;
+  --desinstalar|--uninstall)
+    rm -f "$APPS/openscript.desktop" "$ICONS/openscript.png" "$MIME/packages/openscript.xml"
+    update-mime-database "$MIME" >/dev/null 2>&1 || true
+    update-desktop-database "$APPS" >/dev/null 2>&1 || true
+    echo "OpenScript quitado del menú. Tu perfil (~/.greyfirst) y tus proyectos se conservan."
+    exit 0 ;;
+esac
+
+# Bundled libraries: libpng 1.2, GTK2 and a few X libraries that modern
+# distributions no longer install by default.
+export LD_LIBRARY_PATH="$HERE/usr/lib/bundled${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+# Bundled GTK2 engines/print backends and the light Adwaita theme.
+export GTK_PATH="$HERE/usr/lib/gtk-2.0"
+export GTK_DATA_PREFIX="$HERE/usr"
+export GTK2_RC_FILES="$HERE/usr/share/themes/Adwaita/gtk-2.0/gtkrc"
+
+exec "$APP/celtx" "$@"

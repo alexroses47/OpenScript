@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=OpenScript
+GenericName=Editor de guiones
+GenericName[en]=Screenwriting software
+Comment=Escribe guiones de cine, teatro, radio y cómic
+Comment[en]=Write scripts for film, theatre, radio and comics
+Exec=AppRun %f
+Icon=openscript
+Terminal=false
+Categories=Office;WordProcessor;
+MimeType=application/x-celtx;
+StartupWMClass=Celtx
