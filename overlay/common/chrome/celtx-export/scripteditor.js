@@ -3221,7 +3221,8 @@ var gScriptController = {
 
       var url = "http://127.0.0.1:47890/export/" + kind
         + "?mode=" + encodeURIComponent(this.mode)
-        + "&size=" + encodeURIComponent(size);
+        + "&size=" + encodeURIComponent(size)
+        + "&token=" + encodeURIComponent(openscriptToken());
       var ios = getIOService();
       var channel = ios.newChannelFromURI(ios.newURI(url, null, null));
       channel.QueryInterface(Ci.nsIUploadChannel)
@@ -5174,4 +5175,16 @@ function osText (es, en) {
   }
   catch (ex) {}
   return en;
+}
+
+
+// OpenScript: per-user secret shared by the launcher with the local server.
+function openscriptToken () {
+  try {
+    return Components.classes["@mozilla.org/process/environment;1"]
+      .getService(Components.interfaces.nsIEnvironment).get("OPENSCRIPT_TOKEN");
+  }
+  catch (ex) {
+    return "";
+  }
 }

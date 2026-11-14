@@ -104,11 +104,25 @@ nsCeltxService.prototype = {
       .getService(Ci.nsIPrefService);
     return ps.getBranch("celtx.server.").getCharPref("render.selection");
   },
+  // OpenScript: local render server (render.celtx.com is gone). The launcher
+  // shares a per-user secret through OPENSCRIPT_TOKEN; requests without it
+  // are rejected by the server.
+  get OPENSCRIPT_TOKEN () {
+    try {
+      return Cc["@mozilla.org/process/environment;1"]
+        .getService(Ci.nsIEnvironment).get("OPENSCRIPT_TOKEN");
+    }
+    catch (ex) {
+      return "";
+    }
+  },
   get PDF_CONVERT_URL () {
-    return "http://127.0.0.1:47890/as/pdf"; // local pdfserver (render.celtx.com is gone)
+    return "http://127.0.0.1:47890/as/pdf?token="
+      + encodeURIComponent(this.OPENSCRIPT_TOKEN);
   },
   get PDF_PREVIEW_URL () {
-    return "http://127.0.0.1:47890/as/html"; // local pdfserver
+    return "http://127.0.0.1:47890/as/html?token="
+      + encodeURIComponent(this.OPENSCRIPT_TOKEN);
   },
 
 

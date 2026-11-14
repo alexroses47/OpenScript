@@ -8,6 +8,7 @@ This server typesets the script with WeasyPrint using standard screenplay
 layout and renders preview pages as PNG images via pdftoppm.
 """
 import base64
+import hmac
 import html
 import os
 import re
@@ -23,6 +24,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import exporters  # noqa: E402
 
 HOST, PORT = "127.0.0.1", int(os.environ.get("CELTX_PDF_PORT", "47890"))
+ALLOWED_HOSTS = {"127.0.0.1:%d" % PORT, "localhost:%d" % PORT}
+# Secret shared with the engine by the launcher (see overlay/*/celtx and
+# server/launcher.py). Requests without it are rejected.
+TOKEN = os.environ.get("OPENSCRIPT_TOKEN", "")
+MAX_BODY = 32 * 1024 * 1024  # a script document is far smaller than this
 
 # Preview oversampling for HiDPI displays (Celtx scales CSS px by 2 at 192 dpi).
 PREVIEW_SCALE = int(os.environ.get("CELTX_PDF_PREVIEW_SCALE", "2"))
@@ -96,6 +102,36 @@ def log(*args):
     print("[openscript-server]", *args, file=sys.stderr, flush=True)
 
 
+# ---------------------------------------------------------------------------
+# Security: a script document is untrusted input (a .celtx file can come from
+# anyone). It must never make the renderer read local files or go online.
+# ---------------------------------------------------------------------------
+# WeasyPrint may only resolve data: URIs (no file://, http://, https://, ...).
+NO_FETCH = weasyprint.urls.URLFetcher(allowed_protocols={"data"})
+
+# Elements that load external resources or are not script text.
+DROP_TAGS = ["script", "style", "link", "img", "image", "picture", "source",
+             "object", "embed", "iframe", "frame", "frameset", "video", "audio",
+             "track", "svg", "math", "canvas", "form", "input", "button",
+             "select", "textarea", "base", "meta", "template", "noscript"]
+# Attributes that can reference resources or carry styling.
+DROP_ATTRS = {"style", "src", "srcset", "href", "background", "poster", "data",
+              "action", "formaction", "xlink:href", "rel", "lowsrc", "dynsrc",
+              "longdesc", "usemap", "cite", "codebase", "archive", "manifest"}
+
+
+def sanitize(body):
+    """Keep only text and harmless inline markup from the editor document."""
+    for tag in body.find_all(DROP_TAGS):
+        tag.decompose()
+    for tag in body.find_all("a"):
+        tag.unwrap()
+    for tag in body.find_all(True):
+        for attr in list(tag.attrs):
+            if attr.lower() in DROP_ATTRS or attr.lower().startswith("on"):
+                del tag[attr]
+
+
 def meta(soup, name, default=""):
     tag = soup.find("meta", attrs={"name": name})
     return tag.get("content", default) if tag else default
@@ -112,11 +148,7 @@ def build_document(raw):
     css = (SCREENPLAY_CSS if fmt == "screenplay" else GENERIC_CSS) % {"size": size}
 
     body = soup.body or soup
-    # Drop any editor-only styling/scripts and empty spacer divs.
-    for tag in body.find_all(["script", "style", "link"]):
-        tag.decompose()
-    for tag in body.find_all(attrs={"style": True}):
-        del tag["style"]
+    sanitize(body)
 
     title = soup.title.get_text(strip=True) if soup.title else ""
     if fmt == "comic":
@@ -381,10 +413,10 @@ def render_pdf(raw):
     # Title page and script are laid out separately so the script's page
     # numbering starts at 1 (unnumbered first page) as in the old service.
     title_html, script_html = build_document(raw)
-    script = weasyprint.HTML(string=script_html).render()
+    script = weasyprint.HTML(string=script_html, url_fetcher=NO_FETCH).render()
     if not title_html:
         return script.write_pdf()
-    title = weasyprint.HTML(string=title_html).render()
+    title = weasyprint.HTML(string=title_html, url_fetcher=NO_FETCH).render()
     return script.copy(title.pages + script.pages).write_pdf()
 
 
@@ -420,7 +452,8 @@ def render_preview(raw):
 
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
-        log(self.address_string(), fmt % args)
+        # never log query strings: they carry the session token
+        log(self.address_string(), re.sub(r"\?\S*", "", fmt % args))
 
     def _send(self, code, ctype, data):
         self.send_response(code)
@@ -429,13 +462,43 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _allowed(self, url):
+        """Only the local engine may use the server.
+
+        - Host must be the loopback address (blocks DNS rebinding).
+        - No Origin header: requests made by web pages always carry one.
+        - The per-session token shared by the launcher must match.
+        """
+        host = (self.headers.get("Host") or "").lower()
+        if host not in ALLOWED_HOSTS:
+            self._send(403, "text/plain", b"forbidden host\n")
+            return False
+        if self.headers.get("Origin") is not None:
+            self._send(403, "text/plain", b"forbidden origin\n")
+            return False
+        if TOKEN:
+            given = (parse_qs(url.query).get("token") or [""])[0]
+            if not hmac.compare_digest(given.encode(), TOKEN.encode()):
+                self._send(403, "text/plain", b"bad token\n")
+                return False
+        return True
+
     def do_GET(self):
-        self._send(200, "text/plain", b"openscript server ok\n")
+        if self._allowed(urlsplit(self.path)):
+            self._send(200, "text/plain", b"openscript server ok\n")
 
     def do_POST(self):
-        length = int(self.headers.get("Content-Length", 0))
-        raw = self.rfile.read(length).decode("utf-8", errors="replace")
         url = urlsplit(self.path)
+        if not self._allowed(url):
+            return
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+        except ValueError:
+            length = -1
+        if length < 0 or length > MAX_BODY:
+            self._send(413, "text/plain", b"request too large\n")
+            return
+        raw = self.rfile.read(length).decode("utf-8", errors="replace")
         query = parse_qs(url.query)
         mode = (query.get("mode") or [None])[0]
         size = (query.get("size") or ["USLetter"])[0]
@@ -480,6 +543,8 @@ def with_format(raw, mode, size):
 def serve():
     """Run the server forever (blocking)."""
     log("listening on http://%s:%d" % (HOST, PORT))
+    if not TOKEN:
+        log("WARNING: OPENSCRIPT_TOKEN is not set; any local program can use this server")
     ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()
 
 

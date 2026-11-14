@@ -154,6 +154,20 @@ if [ -f "$dist_bin/defaults/profile/chrome/userChrome.css" ]; then
       cp "$dist_bin/defaults/profile/chrome/userChrome.css" "$prof/chrome/userChrome.css"
   done
 fi
+# Per-user secret shared by the engine and the local server, so no other
+# program (or web page) can use the server. Stored in a private file and
+# reused, so a server left running by an earlier session keeps working.
+if [ -z "$OPENSCRIPT_TOKEN" ]; then
+  token_dir="${XDG_RUNTIME_DIR:-$HOME/.cache}/openscript"
+  token_file="$token_dir/token"
+  if [ ! -s "$token_file" ]; then
+    (umask 077; mkdir -p "$token_dir" &&
+      od -An -N24 -tx1 /dev/urandom | tr -d ' \n' > "$token_file")
+  fi
+  OPENSCRIPT_TOKEN=$(cat "$token_file" 2>/dev/null)
+fi
+export OPENSCRIPT_TOKEN
+
 # Start the local PDF/export server (replacement for render.celtx.com).
 # Frozen binary in the AppImage, Python venv in the tar.gz install. If the
 # port is already taken by another instance, the new server just exits.
