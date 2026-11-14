@@ -92,7 +92,7 @@ no longer exist. OpenScript brings it back to life:
 
 ## Download and install
 
-[![Latest release](https://img.shields.io/github/v/release/alexroses47/OpenScript?label=download&sort=semver)](https://github.com/alexroses47/OpenScript/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/alexroses47/OpenScript?label=download)](https://github.com/alexroses47/OpenScript/releases/latest)
 
 Get the latest version from the **[Releases](https://github.com/alexroses47/OpenScript/releases/latest)** page.
 

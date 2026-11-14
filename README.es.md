@@ -93,7 +93,7 @@ servidores que ya no existen. OpenScript lo devuelve a la vida:
 
 ## Descargar e instalar
 
-[![Última versión](https://img.shields.io/github/v/release/alexroses47/OpenScript?label=descargar&sort=semver)](https://github.com/alexroses47/OpenScript/releases/latest)
+[![Última versión](https://img.shields.io/github/v/release/alexroses47/OpenScript?label=descargar)](https://github.com/alexroses47/OpenScript/releases/latest)
 
 Descarga la última versión desde la página de **[Releases](https://github.com/alexroses47/OpenScript/releases/latest)**.
 
