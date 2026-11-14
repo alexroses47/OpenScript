@@ -1,0 +1,21 @@
+/* Readability fixes for Celtx 2.9.7 on modern GTK/HiDPI desktops.
+   The skin hardcodes light-grey backgrounds but takes text colours from
+   the GTK theme, which leaves light text on light grey. */
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* Bottom view tabs (Script, TypeSet/PDF, Index Cards, ...) */
+#EditModeToolbar, .plaintabbar { background-color: #D7D7D7 !important; color: #1A1A1A !important; }
+#EditModeToolbar tab, .plaintabbar tab { color: #1A1A1A !important; background-color: #C8C8C8 !important; }
+#EditModeToolbar tab[selected="true"], .plaintabbar tab[selected="true"] { color: #000000 !important; background-color: #F2F2F2 !important; font-weight: bold; }
+#EditModeToolbar tab[disabled="true"], .plaintabbar tab[disabled="true"] { color: #6A6A6A !important; }
+#EditModeToolbar label, .plaintabbar label { color: #1A1A1A !important; font-size: 9pt !important; }
+
+/* Bottom status bar ("Signed Out", key hints) */
+statusbar, statusbarpanel, statusbar label, #statusmsg { color: #1A1A1A !important; }
+statusbar { background-color: #E6E6E6 !important; }
+
+/* Bottom project bar ("Get a better Celtx", "Signed Out") */
+#projectstatusbar, #projectstatusbar label, #projectstatusbar toolbarbutton { color: #1A1A1A !important; }
+
+/* Tree column headers (e.g. "# Title" in Scenes/Pages) */
+treecol, treecolpicker, .treecol-text { color: #1A1A1A !important; }

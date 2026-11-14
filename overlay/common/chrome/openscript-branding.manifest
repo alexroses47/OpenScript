@@ -1,0 +1,5 @@
+content openscriptbrand openscript-branding/
+override chrome://branding/locale/brand.dtd chrome://openscriptbrand/content/brand.dtd
+override chrome://branding/locale/brand.properties chrome://openscriptbrand/content/brand.properties
+override chrome://global/locale/brand.dtd chrome://openscriptbrand/content/brand.dtd
+override chrome://global/locale/brand.properties chrome://openscriptbrand/content/brand.properties

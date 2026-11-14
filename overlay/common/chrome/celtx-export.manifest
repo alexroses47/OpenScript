@@ -1,0 +1,2 @@
+content celtxexport celtx-export/
+override chrome://celtx/content/editors/scripteditor.js chrome://celtxexport/content/scripteditor.js
