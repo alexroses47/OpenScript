@@ -6,8 +6,9 @@
 
 🌐 **English** · [Español](README.es.md) · ❤️ [Support the project](#support-openscript)
 
-**Open-source software for writing screenplays, comics, stage plays, radio plays and more.**
-A re-implementation of the legendary Celtx 2.9.7, brought back to life for today's computers.
+**A simple, professional, open-source program for writing screenplays, comics, stage plays,
+radio plays and more.** A revival of the legendary Celtx 2.9.7, brought back to life for today's
+computers by Ismael A. Rodríguez.
 
 > OpenScript is an independent project based on the open-source code of Celtx 2.9.7
 > (Mozilla Public License 2.0). **It is not affiliated with, sponsored or endorsed by Celtx Inc.**
@@ -36,6 +37,35 @@ servers that were shut down. The program itself was still good, and its code is 
 **OpenScript was born from the belief that a tool like this does not deserve to be locked away in
 obsolescence.** The goal is to keep it alive, free and working on current computers, and to make
 sure that whatever you write with it can always be opened, thanks to open formats such as Fountain.
+
+## Simple on purpose
+
+Many writing tools today pile on hundreds of features: cloud workspaces, collaboration dashboards,
+production pipelines, AI assistants. All of that gets between you and the page. OpenScript goes
+the other way: **it is made for writing.** You open it, choose the kind of script and start typing;
+the formatting takes care of itself. Everything it has is there to help you write, and nothing
+else competes for your attention.
+
+## Features
+
+Everything the Celtx 2.9.7 desktop program offered, working offline:
+
+- **Script formats:** screenplay (film), stage play (theatre), audio play (radio/podcast),
+  two-column audio-visual (AV), comic book and novel.
+- **Automatic formatting:** scene headings, action, characters, dialogue, parentheticals,
+  transitions, shots, panels and captions. *Tab* and *Enter* jump to the right element, and
+  character names and scene headings autocomplete.
+- **Adapt a script to another format,** for example a screenplay into a stage play.
+- **Title page,** scene numbering, page breaks and industry-standard print layout.
+- **Index cards** to outline and reorder scenes, plus a **scratchpad** for loose ideas.
+- **Notes and media** (images, audio, links) attached to any point of the script.
+- **Master catalog and script breakdown:** characters, locations, props, wardrobe, effects and
+  more, with breakdown reports.
+- **Reports** of scenes, characters and dialogue.
+- **Storyboard** editor and a simple **sketch** tool for diagrams and floor plans.
+- **Production calendar and schedule.**
+- **Projects as single `.celtx` files** that keep all of your documents together.
+- **Spell checking** in English and Spanish.
 
 ## What it adds to Celtx 2.9.7
 
@@ -163,6 +193,12 @@ DE3ZBDqJ1iUunRTz7KkQQj8QrNFdHkyjv38FNQHLchJT
 **Please note:** donations are voluntary and cannot be refunded. They don't pay for anything in
 return: no product, service, perks, early or exclusive builds, priority support, or influence
 over the project's direction. Every release remains free and public for everyone.
+
+## Credits
+
+- **OpenScript revival:** Ismael A. Rodríguez.
+- **Original program:** Celtx 2.9.7, by the Celtx team (Greyfirst Corp.), released as open
+  source under the MPL 2.0. The original credits are kept in the app's *About* window.
 
 ## License
 

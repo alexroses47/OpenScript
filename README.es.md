@@ -6,8 +6,9 @@
 
 🌐 [English](README.md) · **Español** · ❤️ [Apoya el proyecto](#apoya-a-openscript)
 
-**Programa de código abierto para escribir guiones de cine, cómics, teatro, radio y más.**
-Una reimplementación del legendario Celtx 2.9.7, actualizada para que funcione en equipos actuales.
+**Un programa simple y profesional, de código abierto, para escribir guiones de cine, cómics,
+teatro, radio y más.** Una nueva vida para el legendario Celtx 2.9.7, revivido para los equipos
+actuales por Ismael A. Rodríguez.
 
 > OpenScript es un proyecto independiente basado en el código abierto de Celtx 2.9.7
 > (Mozilla Public License 2.0). **No está afiliado, patrocinado ni respaldado por Celtx Inc.**
@@ -38,6 +39,35 @@ bueno, y su código es abierto.
 obsolescencia.** El objetivo es mantenerla viva, libre y funcionando en equipos actuales, y
 asegurarse de que lo que escribas en ella se pueda abrir siempre, gracias a formatos abiertos como
 Fountain.
+
+## Simple a propósito
+
+Hoy muchas herramientas de escritura acumulan cientos de funciones: espacios en la nube, paneles de
+colaboración, flujos de producción, asistentes de IA. Todo eso se interpone entre tú y la página.
+OpenScript va en sentido contrario: **está hecho para escribir.** Lo abres, eliges el tipo de guion y
+empiezas a teclear; el formato se aplica solo. Todo lo que tiene está para ayudarte a escribir, y
+nada más compite por tu atención.
+
+## Funciones
+
+Todo lo que ofrecía Celtx 2.9.7 de escritorio, funcionando sin internet:
+
+- **Formatos de guion:** cine, teatro, radio/pódcast, audiovisual a dos columnas (AV), cómic y
+  novela.
+- **Formato automático:** encabezados de escena, acción, personajes, diálogos, acotaciones,
+  transiciones, planos, paneles y rótulos. *Tab* y *Enter* saltan al elemento correcto, y los
+  nombres de personajes y encabezados se autocompletan.
+- **Adaptar un guion a otro formato,** por ejemplo de cine a teatro.
+- **Portada,** numeración de escenas, saltos de página y maquetación de impresión estándar.
+- **Fichas** para estructurar y reordenar escenas, y un **block de notas** para ideas sueltas.
+- **Notas y archivos** (imágenes, audio, enlaces) en cualquier punto del guion.
+- **Catálogo maestro y desglose del guion:** personajes, locaciones, utilería, vestuario, efectos y
+  más, con informes de desglose.
+- **Informes** de escenas, personajes y diálogos.
+- Editor de **storyboard** y una herramienta de **bocetos** para diagramas y plantas.
+- **Calendario y plan de producción.**
+- **Proyectos en un solo archivo `.celtx`** que guarda todos tus documentos juntos.
+- **Corrector ortográfico** en español e inglés.
 
 ## Qué aporta respecto a Celtx 2.9.7
 
@@ -167,6 +197,12 @@ DE3ZBDqJ1iUunRTz7KkQQj8QrNFdHkyjv38FNQHLchJT
 productos, ni servicios, ni ventajas, ni versiones anticipadas o exclusivas, ni soporte
 prioritario, ni voz en las decisiones del proyecto. Todas las versiones siguen siendo gratuitas y
 públicas para todo el mundo.
+
+## Créditos
+
+- **Revivificación de OpenScript:** Ismael A. Rodríguez.
+- **Programa original:** Celtx 2.9.7, del equipo de Celtx (Greyfirst Corp.), publicado como código
+  abierto bajo la MPL 2.0. Los créditos originales se conservan en la ventana *Acerca de* de la app.
 
 ## Licencia
 
