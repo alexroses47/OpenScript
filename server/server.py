@@ -152,17 +152,17 @@ def build_document(raw):
 
 # ---------------------------------------------------------------------------
 # Comic book format, reproducing the old render.celtx.com (LaTeX) output:
-# one sheet per comic page, "Pág. N" header and a bordered three-column
-# table (Panel | Descripción | Diálogo) that runs to the bottom of the sheet.
+# one sheet per comic page, "Page N" header and a bordered three-column
+# table (Panel | Description | Dialogue) that runs to the bottom of the sheet.
+# Labels follow the operating system language (Spanish or English).
 # Measurements taken from a PDF produced by the original service (A4).
 # ---------------------------------------------------------------------------
-COMIC_LABELS = {
-    "page": os.environ.get("CELTX_PDF_LABEL_PAGE", "Pág."),
-    "panel": os.environ.get("CELTX_PDF_LABEL_PANEL", "Panel"),
-    "description": os.environ.get("CELTX_PDF_LABEL_DESCRIPTION", "Descripción"),
-    "dialog": os.environ.get("CELTX_PDF_LABEL_DIALOG", "Diálogo"),
-    "caption": os.environ.get("CELTX_PDF_LABEL_CAPTION", "Rótulo"),
-}
+def comic_labels():
+    """PDF labels in the operating system language (see exporters)."""
+    lb = exporters.labels()
+    return {"page": lb["page_short"], "panel": "Panel",
+            "description": lb["description"], "dialog": lb["dialog"],
+            "caption": lb["caption_title"]}
 
 COMIC_CSS = """
 @page { size: %(size)s; margin: 0.82in 0.47in 0.55in 0.5in; }
@@ -288,7 +288,7 @@ def build_comic(soup, body, title, size):
         # long comic page) simply continues on the next sheet.
         "table_h": PAGE_HEIGHTS_IN.get(size, 11.0) - 0.82 - 0.55 - 0.6 - 0.05,
     }
-    L = COMIC_LABELS
+    L = comic_labels()
 
     # Walk the editor paragraphs: sceneheading = comic page, shot = panel,
     # character/parenthetical/dialog/caption = dialogue column of the panel.

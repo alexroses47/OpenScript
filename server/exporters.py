@@ -18,10 +18,41 @@ from xml.sax.saxutils import escape as xml_escape
 
 from bs4 import BeautifulSoup, NavigableString
 
-# Labels used when mapping comic structure (override via environment).
-LABEL_PAGE = os.environ.get("CELTX_EXPORT_LABEL_PAGE", "PÁGINA")
-LABEL_PANEL = os.environ.get("CELTX_EXPORT_LABEL_PANEL", "PANEL")
-LABEL_CAPTION = os.environ.get("CELTX_EXPORT_LABEL_CAPTION", "RÓTULO")
+# ---------------------------------------------------------------------------
+# Output language (follows the operating system, like the user interface)
+# ---------------------------------------------------------------------------
+def system_language():
+    """'es' or 'en'. OPENSCRIPT_LANG overrides the detection."""
+    lang = os.environ.get("OPENSCRIPT_LANG", "")
+    if not lang and os.name == "nt":
+        try:
+            import ctypes
+            langid = ctypes.windll.kernel32.GetUserDefaultUILanguage()
+            lang = "es" if (langid & 0x3FF) == 0x0A else "en"
+        except Exception:
+            lang = ""
+    if not lang:
+        for var in ("LANGUAGE", "LC_ALL", "LC_MESSAGES", "LANG"):
+            value = os.environ.get(var, "")
+            if value and value not in ("C", "POSIX", "C.UTF-8"):
+                lang = value.split(":")[0]
+                break
+    return "es" if lang.lower().startswith("es") else "en"
+
+
+LABELS = {
+    "es": {"page": "PÁGINA", "panel": "PANEL", "caption": "RÓTULO",
+           "page_short": "Pág.", "description": "Descripción",
+           "dialog": "Diálogo", "caption_title": "Rótulo", "byline": "Escrito por"},
+    "en": {"page": "PAGE", "panel": "PANEL", "caption": "CAPTION",
+           "page_short": "Page", "description": "Description",
+           "dialog": "Dialogue", "caption_title": "Caption", "byline": "Written by"},
+}
+
+
+def labels():
+    return LABELS[system_language()]
+
 
 SCENE_PREFIX = re.compile(r"^(INT|EXT|EST|INT\./EXT|INT/EXT|I/E)[ .]", re.I)
 
@@ -179,7 +210,7 @@ def _fountain_title_page(info):
 
     field("Title", info["title"])
     if info["author"]:
-        field("Credit", info["byline"] or "Escrito por")
+        field("Credit", info["byline"] or labels()["byline"])
         field("Author", info["author"])
     field("Source", info["source"])
     field("Contact", info["contact"])
@@ -196,6 +227,8 @@ def _fountain_character(text):
 
 
 def to_fountain(raw, mode=None):
+    lb = labels()
+    LABEL_PAGE, LABEL_PANEL, LABEL_CAPTION = lb["page"], lb["panel"], lb["caption"]
     info, elements = parse(raw, mode)
     blocks = []
     tp = _fountain_title_page(info)
@@ -334,6 +367,8 @@ FDX_TYPES = {
 
 
 def to_fdx(raw, mode=None):
+    lb = labels()
+    LABEL_PAGE, LABEL_PANEL, LABEL_CAPTION = lb["page"], lb["panel"], lb["caption"]
     info, elements = parse(raw, mode)
     paras = []
     if info["mode"] == "comic":
@@ -382,7 +417,7 @@ def to_fdx(raw, mode=None):
             tp_line(line)
         if info["author"]:
             tp_line("")
-            tp_line(info["byline"] or "Escrito por")
+            tp_line(info["byline"] or labels()["byline"])
             tp_line("")
             for line in info["author"].splitlines():
                 tp_line(line)
@@ -423,6 +458,7 @@ def _html_inline(runs):
 
 def office_html(raw, mode=None, page_size="USLetter"):
     """Simple, office-friendly HTML (LibreOffice honours these styles)."""
+    lb = labels()
     info, elements = parse(raw, mode)
     font = "font-family: 'Courier New', 'Liberation Mono', monospace; font-size: 12pt;"
     parts = ['<html><head><meta charset="utf-8"><title>%s</title><style>'
@@ -444,12 +480,13 @@ def office_html(raw, mode=None, page_size="USLetter"):
     if info["mode"] == "comic":
         for pn, page in enumerate(comic_structure(elements), 1):
             brk = first_break if pn == 1 else ' style="page-break-before: always"'
-            parts.append("<p%s>Pág. %d</p>" % (brk, pn))
+            parts.append("<p%s>%s %d</p>" % (brk, html.escape(lb["page_short"]), pn))
             # LibreOffice's HTML import ignores table CSS: use attributes
             parts.append('<table width="100%" border="1" cellpadding="6" cellspacing="0">'
                          '<col width="10%"><col width="44%"><col width="46%">'
-                         '<tr><th align="center">Panel</th><th align="center">Descripción</th>'
-                         '<th align="center">Diálogo</th></tr>')
+                         '<tr><th align="center">Panel</th><th align="center">%s</th>'
+                         '<th align="center">%s</th></tr>'
+                         % (html.escape(lb["description"]), html.escape(lb["dialog"])))
             for mn, panel in enumerate(page["panels"], 1):
                 desc = "".join('<p style="margin:0">%s</p>' % _html_inline(d) for d in panel["desc"])
                 items, block = [], []
@@ -458,7 +495,7 @@ def office_html(raw, mode=None, page_size="USLetter"):
                         items.append(block)
                         block = []
                     if cls == "caption":
-                        block.append("Rótulo: " + _html_inline(runs))
+                        block.append(html.escape(lb["caption_title"]) + ": " + _html_inline(runs))
                     elif cls == "character":
                         block.append(html.escape(plain(runs).upper()))
                     else:

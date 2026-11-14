@@ -51,14 +51,6 @@ def extract_paf(paf, dest):
     return os.path.join(dest, "App", "Celtx")
 
 
-def spanish_l10n(win_app):
-    """Spanish default prefs from the Windows build, without //@line noise."""
-    with open(os.path.join(win_app, "defaults", "pref", "celtx-l10n.js"),
-              encoding="utf-8") as f:
-        lines = [l.rstrip("\r\n") for l in f if not l.startswith("//@line")]
-    return "\n".join(lines) + "\n"
-
-
 def build_celtx_es_jar(win_app, out_jar):
     """Extract locale/es-ES/celtx from the Windows celtx.jar into its own jar."""
     with zipfile.ZipFile(os.path.join(win_app, "chrome", "celtx.jar")) as src, \
@@ -85,13 +77,14 @@ def replace_icons(app):
                  os.path.join(app, "icons", "openscript.png"))
 
 
-def set_locale_es(app):
+def set_default_locale(app, locale="en-US"):
+    """Fallback UI language (the OS language is used when available)."""
     pref = os.path.join(app, "defaults", "pref", "celtx.js")
     with open(pref, encoding="utf-8", errors="surrogateescape") as f:
         s = f.read()
-    s = s.replace('pref("general.useragent.locale", "en-US");',
-                  'pref("general.useragent.locale", "es-ES");')
-    with open(pref, "w", encoding="utf-8", errors="surrogateescape") as f:
+    s = re.sub(r'pref\("general\.useragent\.locale", "[^"]*"\);',
+               'pref("general.useragent.locale", "%s");' % locale, s)
+    with open(pref, "w", encoding="utf-8", errors="surrogateescape", newline="") as f:
         f.write(s)
 
 
@@ -115,10 +108,6 @@ def build_linux(args, work):
     for name in ("es_ES.aff", "es_ES.dic"):
         shutil.copy2(os.path.join(win_app, "dictionaries", name),
                      os.path.join(app, "dictionaries"))
-    with open(os.path.join(app, "defaults", "pref", "celtx-l10n.js"), "w",
-              encoding="utf-8") as f:
-        f.write(spanish_l10n(win_app))
-    set_locale_es(app)
     replace_icons(app)
 
     # Light-theme shim (needs gcc; prebuilt .so is also shipped)
@@ -177,8 +166,9 @@ def build_windows(args, work):
     app = os.path.join(pkg, "app")
     shutil.copytree(win_app, app)
     copytree(os.path.join(ROOT, "overlay", "common"), app)
+    set_default_locale(app)
 
-    # English locale too, so the language can be switched
+    # English locale (the Spanish portable build ships only Spanish)
     with tarfile.open(args.linux_tar) as t:
         for member in ("celtx/chrome/en-US.jar", "celtx/chrome/en-US.manifest",
                        "celtx/chrome/calendar-en-US.jar",
