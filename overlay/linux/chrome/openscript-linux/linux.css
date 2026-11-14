@@ -1,0 +1,13 @@
+/* OpenScript (Linux): with the bundled light Adwaita GTK2 theme the open or
+   hovered menu bar item gets white text on a light background, which makes
+   it disappear. Keep it dark and readable. */
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+menubar > menu[_moz-menuactive="true"],
+menubar > menu[open="true"],
+menubar > menu[_moz-menuactive="true"] > label,
+menubar > menu[open="true"] > label,
+menubar > menu[_moz-menuactive="true"] > .menubar-text,
+menubar > menu[open="true"] > .menubar-text {
+  color: #1A1A1A !important;
+}
