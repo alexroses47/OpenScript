@@ -36,9 +36,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/bash")
         process.arguments = [script] + files
-        // Screen scale (2 on Retina) so the script can pick the Windows DPI
+        // Screen scale (2 on Retina) so the script can pick the Windows DPI.
+        // NSScreen.main is nil for this window-less launcher: use the
+        // highest scale among the connected screens.
         var environment = ProcessInfo.processInfo.environment
-        let scale = NSScreen.main?.backingScaleFactor ?? 1
+        let scale = NSScreen.screens.map { $0.backingScaleFactor }.max() ?? 2
         environment["OPENSCRIPT_SCALE"] = String(Int(scale.rounded()))
         process.environment = environment
         if quitWhenDone {
