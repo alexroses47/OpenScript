@@ -4,6 +4,8 @@
 
 # OpenScript
 
+🌐 [English](README.md) · **Español**
+
 **Programa de código abierto para escribir guiones de cine, cómics, teatro, radio y más.**
 Una reimplementación del legendario Celtx 2.9.7, actualizada para que funcione en equipos actuales.
 
@@ -43,7 +45,7 @@ servidores que ya no existen. OpenScript lo devuelve a la vida:
   - **OpenDocument** (`.odt`) y **Word** (`.docx`); estos dos necesitan LibreOffice.
 - **Sin errores al iniciar.** Se eliminaron las conexiones a los servicios antiguos de Celtx, que
   provocaban alertas de cifrado (`ssl_error_no_cypher_overlap`).
-- **Interfaz en español** (con corrector ortográfico) y también en inglés.
+- **Interfaz en inglés y en español**, según el idioma de tu sistema, con corrector ortográfico en ambos idiomas. Los PDF y las exportaciones usan el mismo idioma.
 - **Linux moderno:**
   - Tema claro legible aunque el escritorio use un tema oscuro.
   - Vista previa nítida en pantallas HiDPI/4K.

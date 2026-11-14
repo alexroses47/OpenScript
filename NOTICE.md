@@ -1,30 +1,32 @@
-# Avisos legales y componentes de terceros
+# Legal notices and third-party components
 
-## Marca
+## Trademark
 
-OpenScript es un proyecto independiente. **No está afiliado, patrocinado ni respaldado por
-Celtx Inc.** «Celtx» es una marca registrada de su propietario y se menciona aquí solo para
-describir el origen del código. OpenScript no usa el logotipo de Celtx como identidad propia.
+OpenScript is an independent project. **It is not affiliated with, sponsored or endorsed by
+Celtx Inc.** "Celtx" is a registered trademark of its owner and is mentioned here only to
+describe where the code comes from. OpenScript does not use the Celtx logo as its own identity.
 
-Algunas imágenes internas del motor original (por ejemplo, la pantalla de bienvenida)
-pueden seguir mostrando elementos visuales de Celtx 2.9.7; se irán sustituyendo.
+Some internal images and texts of the original engine (for example the "Welcome to Celtx"
+start screen) may still show Celtx 2.9.7 elements; they are being replaced.
 
-## Componentes
+## Components
 
-| Componente | Licencia | Origen |
+| Component | License | Origin |
 |---|---|---|
-| Celtx 2.9.7 (motor, interfaz XUL/JS) | MPL 2.0 | Celtx / Greyfirst Corp. Fuente: `celtx-2-9-7-src.tar.bz2` |
-| XULRunner / Gecko 1.9, NSS, NSPR, SQLite | MPL / tri-licencia Mozilla, dominio público (SQLite) | Incluidos en Celtx 2.9.7 |
-| Traducción al español de Celtx 2.9.7 | MPL 2.0 | Celtx Portable 2.9.7 Spanish (PortableApps.com) |
-| Diccionario ortográfico es_ES | Ver licencia del diccionario incluido | Celtx Portable 2.9.7 Spanish |
+| Celtx 2.9.7 (engine, XUL/JS interface) | MPL 2.0 | Celtx / Greyfirst Corp. Source: `celtx-2-9-7-src.tar.bz2` |
+| XULRunner / Gecko 1.9, NSS, NSPR, SQLite | Mozilla MPL tri-license; SQLite is public domain | Included in Celtx 2.9.7 |
+| Spanish translation of Celtx 2.9.7 | MPL 2.0 | Celtx Portable 2.9.7 Spanish (PortableApps.com) |
+| es_ES spell-check dictionary | See the bundled dictionary's license | Celtx Portable 2.9.7 Spanish |
 | WeasyPrint | BSD-3-Clause | https://weasyprint.org |
 | pypdfium2 / PDFium | Apache-2.0 / BSD-3-Clause | https://github.com/pypdfium2-team/pypdfium2 |
 | Beautiful Soup | MIT | https://www.crummy.com/software/BeautifulSoup/ |
-| Pango, cairo, HarfBuzz (build de Windows, vía MSYS2) | LGPL-2.1+ / MIT | https://www.msys2.org |
-| LibreOffice (opcional, no incluido) | MPL 2.0 | https://www.libreoffice.org |
+| Pango, HarfBuzz, FontConfig, FreeType, GLib (Windows build via MSYS2, AppImage via Ubuntu) | LGPL-2.1+ / MIT / FreeType License | https://www.msys2.org, https://ubuntu.com |
+| GTK 2, libXt, libSM, libICE (bundled in the AppImage) | LGPL-2.1+ / MIT | https://www.gtk.org, https://www.x.org |
+| libpng 1.2.59 (bundled in the AppImage) | libpng license | http://www.libpng.org |
+| LibreOffice (optional, not included) | MPL 2.0 | https://www.libreoffice.org |
 
-## Cambios de OpenScript
+## OpenScript changes
 
-Los archivos de `overlay/` que sustituyen archivos de Celtx 2.9.7 conservan su licencia
-MPL 2.0 y están marcados con comentarios «Local modification» / «OpenScript».
-El resto del código de este repositorio también se publica bajo MPL 2.0.
+Files in `overlay/` that replace Celtx 2.9.7 files keep their MPL 2.0 license and are marked
+with "Local modification" / "OpenScript" comments. The rest of the code in this repository is
+also released under MPL 2.0.
