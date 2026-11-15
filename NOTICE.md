@@ -26,6 +26,7 @@ the Celtx team.
 | GTK 2, libXt, libSM, libICE (bundled in the AppImage) | LGPL-2.1+ / MIT | https://www.gtk.org, https://www.x.org |
 | libpng 1.2.59 (bundled in the AppImage) | libpng license | http://www.libpng.org |
 | LibreOffice (optional, not included) | MPL 2.0 | https://www.libreoffice.org |
+| Windows, Linux (Tux) and Apple logos in `assets/platforms/` (README only) | MIT (Devicon v2.16.0); the logos are trademarks of their owners | https://github.com/devicons/devicon |
 | Wine 11.21 (Staging), macOS app only | LGPL-2.1+ | Build by Gcenx: https://github.com/Gcenx/macOS_Wine_builds/releases/tag/11.21 (`wine-staging-11.21-osx64.tar.xz`, SHA-256 in `packaging/tools.sha256`). Source code: https://gitlab.winehq.org/wine/wine/-/tree/wine-11.21 and https://gitlab.winehq.org/wine/wine-staging/-/tree/v11.21 |
 | MoltenVK and other libraries bundled in that Wine build, macOS app only | Apache-2.0, LGPL and others (see the Wine build) | https://github.com/Gcenx/macOS_Wine_builds |
 

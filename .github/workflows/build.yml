@@ -305,8 +305,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Copies with fixed names, for the README's direct download links
+          # (https://github.com/<repo>/releases/latest/download/<name>)
+          mkdir stable
+          cp out/OpenScript-windows/*-windows-setup.exe stable/OpenScript-windows-setup.exe
+          cp out/OpenScript-appimage/*.AppImage stable/OpenScript-x86_64.AppImage
+          cp out/OpenScript-macos/*.dmg stable/OpenScript-macos.dmg
           gh release create "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" \
             --title "OpenScript $GITHUB_REF_NAME" --generate-notes \
             out/OpenScript-appimage/*.AppImage out/OpenScript-linux/*.tar.gz \
             out/OpenScript-windows/*-windows-setup.exe out/OpenScript-windows/*.zip \
-            out/OpenScript-macos/*.dmg
+            out/OpenScript-macos/*.dmg stable/*

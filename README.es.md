@@ -14,6 +14,31 @@ actuales.
 > (Mozilla Public License 2.0). **No está afiliado, patrocinado ni respaldado por Celtx Inc.**
 > «Celtx» es una marca registrada de su respectivo propietario. Consulta [NOTICE.md](NOTICE.md).
 
+## Descargar
+
+<table align="center">
+  <tr>
+    <td align="center" width="220">
+      <a href="https://github.com/alexroses47/OpenScript/releases/latest/download/OpenScript-windows-setup.exe"><img src="assets/platforms/windows.svg" width="64" alt="Windows"><br><b>Windows</b></a><br>
+      <sub>10 y 11 · instalador</sub>
+    </td>
+    <td align="center" width="220">
+      <a href="https://github.com/alexroses47/OpenScript/releases/latest/download/OpenScript-x86_64.AppImage"><img src="assets/platforms/linux.svg" width="64" alt="Linux"><br><b>Linux</b></a><br>
+      <sub>x86_64 · AppImage</sub>
+    </td>
+    <td align="center" width="220">
+      <a href="https://github.com/alexroses47/OpenScript/releases/latest/download/OpenScript-macos.dmg"><img src="assets/platforms/apple.svg" width="64" alt="macOS"><br><b>macOS</b></a><br>
+      <sub>Apple Silicon e Intel · experimental</sub>
+    </td>
+  </tr>
+</table>
+
+**Windows:** ejecuta el instalador y sigue *Siguiente → Siguiente*. Si SmartScreen te avisa, pulsa *Más información → Ejecutar de todas formas*.<br>
+**Linux:** dale permiso de ejecución con `chmod +x OpenScript-x86_64.AppImage` y ábrelo. Con `--install` lo añades al menú de aplicaciones.<br>
+**macOS:** abre el `.dmg` y arrastra OpenScript a Aplicaciones. La primera vez, ve a *Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente*. En Apple Silicon hace falta Rosetta 2.
+
+Zip portable de Windows, paquete de Linux con instalador y versiones anteriores: [Releases](https://github.com/alexroses47/OpenScript/releases/latest). Instrucciones completas: [Descargar e instalar](#descargar-e-instalar).
+
 ## Capturas
 
 | Guion de cine | Vista previa (PDF) |
