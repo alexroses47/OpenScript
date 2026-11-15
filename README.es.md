@@ -143,6 +143,9 @@ No necesita instalación. Para exportar a ODT/DOCX, instala [LibreOffice](https:
 
 ### macOS (Apple Silicon e Intel)
 
+La versión de macOS es estable, pero aún experimental, y puede tardar un poco más en abrirse que en
+Linux o Windows.
+
 1. Abre `OpenScript-*-macos.dmg` y arrastra **OpenScript** a **Aplicaciones**.
 2. Abre OpenScript desde Aplicaciones. El primer arranque tarda un poco más mientras se prepara.
 
